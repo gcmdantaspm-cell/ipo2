@@ -1738,9 +1738,365 @@ body.sidebar-collapsed .app-main {
   }
 }
 
+
+/* ==========================================================================
+   AUTHENTICATION OVERLAY & DOWNLOAD PROTECTION MODAL
+   ========================================================================== */
+.auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, #0f172a 0%, #050811 100%);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.auth-overlay.authenticated {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.auth-card {
+  background: #0b1120;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 45px rgba(37, 99, 235, 0.2);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem 2.2rem;
+  max-width: 440px;
+  width: 100%;
+  color: #f8fafc;
+  animation: authFadeIn 0.4s ease-out;
+}
+@keyframes authFadeIn {
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.auth-icon-box {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, var(--brand-600), var(--accent-600));
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  margin-bottom: 1rem;
+}
+.auth-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 0.4rem;
+}
+.auth-subtitle {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.auth-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+}
+.auth-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.auth-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.auth-input-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 0.95rem;
+  color: #64748b;
+  pointer-events: none;
+}
+.auth-input {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1.5px solid #1e293b;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 2.6rem 0.75rem 2.6rem;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s;
+}
+.auth-input:focus {
+  border-color: var(--brand-500);
+  background: rgba(15, 23, 42, 1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+.auth-input::placeholder { color: #475569; }
+
+.auth-toggle-pass-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 0.95rem;
+  transition: color 0.15s;
+}
+.auth-toggle-pass-btn:hover { color: #ffffff; }
+
+.auth-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+.auth-remember-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  user-select: none;
+}
+.auth-remember-label input {
+  accent-color: var(--brand-600);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.auth-error-msg {
+  display: none;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  color: #fda4af;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  animation: authShake 0.3s;
+}
+@keyframes authShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.auth-submit-btn {
+  background: linear-gradient(135deg, var(--brand-600), var(--brand-700));
+  border: 1px solid var(--brand-500);
+  color: #ffffff;
+  padding: 0.85rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  transition: all 0.2s;
+  font-family: inherit;
+  width: 100%;
+}
+.auth-submit-btn:hover {
+  background: linear-gradient(135deg, var(--brand-700), var(--brand-800));
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+}
+
+
+
+/* Modal de Download Protegido */
+.auth-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.auth-modal-card {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  max-width: 460px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+  animation: authFadeIn 0.25s ease-out;
+}
+.auth-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--card-border);
+}
+.auth-modal-close {
+  background: var(--slate-100);
+  border: none;
+  color: var(--text-muted);
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.auth-modal-close:hover { background: var(--rose-100); color: var(--rose-700); }
+
+.auth-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--card-border);
+}
+.btn-cancel {
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  color: var(--text-main);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.btn-cancel:hover { background: var(--slate-200); }
+
 </style>
 </head>
 <body>
+
+  <!-- TELA DE LOGIN / BLOQUEIO INICIAL COM SENHA -->
+  <div id="auth-overlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-icon-box">⚡</div>
+        <h2 class="auth-title">LDA² SISTEMA <span class="brand-tag">PRO</span></h2>
+        <p class="auth-subtitle">Acesso Restrito ao Aluno Aprovado • Investigação Policial</p>
+      </div>
+
+      <form id="auth-form" class="auth-form" onsubmit="handleLoginSubmit(event)">
+        <div class="auth-input-group">
+          <label for="auth-user" class="auth-label">Usuário</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">👤</span>
+            <input type="text" id="auth-user" class="auth-input" placeholder="Digite seu usuário" autocomplete="username" required>
+          </div>
+        </div>
+
+        <div class="auth-input-group">
+          <label for="auth-pass" class="auth-label">Senha de Acesso</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">🔒</span>
+            <input type="password" id="auth-pass" class="auth-input" placeholder="Digite sua senha" autocomplete="current-password" required>
+            <button type="button" class="auth-toggle-pass-btn" onclick="togglePasswordVisibility('auth-pass', this)" title="Exibir/Ocultar senha">👁️</button>
+          </div>
+        </div>
+
+        <div class="auth-options">
+          <label class="auth-remember-label">
+            <input type="checkbox" id="auth-remember" checked>
+            <span>Lembrar acesso neste navegador</span>
+          </label>
+        </div>
+
+        <div id="auth-error-msg" class="auth-error-msg">
+          Usuário ou senha incorretos. Tente novamente.
+        </div>
+
+        <button type="submit" class="auth-submit-btn">
+          <span>Entrar na Plataforma</span> <span>⚡</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMAÇÃO DE SENHA PARA BAIXAR HTML -->
+  <div id="download-modal" class="auth-modal-overlay" style="display: none;">
+    <div class="auth-modal-card">
+      <div class="auth-modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">📥</span>
+          <h3 style="margin: 0; font-size: 1.15rem; color: var(--text-heading);">Autorização para Download do HTML</h3>
+        </div>
+        <button class="auth-modal-close" onclick="closeDownloadModal()">✕</button>
+      </div>
+      <div class="auth-modal-body">
+        <p style="margin-bottom: 1.2rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+          Para exportar o arquivo HTML completo com todas as 550 questões, gabarito e progresso gravado, confirme a senha de autorização:
+        </p>
+        <div class="auth-input-group">
+          <label for="download-pass" class="auth-label">Senha de Confirmação</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">🔒</span>
+            <input type="password" id="download-pass" class="auth-input" placeholder="Digite sua senha de autorização" onkeydown="if(event.key==='Enter') confirmDownloadPassword()">
+            <button type="button" class="auth-toggle-pass-btn" onclick="togglePasswordVisibility('download-pass', this)" title="Exibir/Ocultar senha">👁️</button>
+          </div>
+        </div>
+        <div id="download-error-msg" class="auth-error-msg" style="margin-top: 10px;">
+          Senha incorreta para autorizar o download.
+        </div>
+      </div>
+      <div class="auth-modal-footer">
+        <button type="button" class="btn-cancel" onclick="closeDownloadModal()">Cancelar</button>
+        <button type="button" class="auth-submit-btn" style="width: auto; padding: 0.6rem 1.4rem;" onclick="confirmDownloadPassword()">
+          <span>Baixar HTML</span> <span>📥</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
 
   <!-- MOBILE OVERLAY BACKDROP -->
   <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
@@ -2410,8 +2766,12 @@ body.sidebar-collapsed .app-main {
             <span id="theme-icon">🌙</span>
           </button>
 
-          <button class="topbar-btn btn-accent" onclick="downloadHTML()" title="Baixar este livro com todo o progresso para estudo offline">
+          <button class="topbar-btn btn-accent" onclick="openDownloadModal()" title="Baixar este livro com todo o progresso para estudo offline (requer senha)">
             <span>📥</span> <span>Baixar HTML</span>
+          </button>
+
+          <button class="topbar-btn" onclick="logoutPlatform()" title="Bloquear acesso e voltar à tela de login" style="color: var(--rose-600); border-color: rgba(244, 63, 94, 0.3);">
+            <span>🔒</span> <span>Sair</span>
           </button>
         </div>
       </header>
@@ -22406,6 +22766,163 @@ body.sidebar-collapsed .app-main {
   <script>
 
     // ==========================================================================
+    // SISTEMA DE SEGURANÇA E AUTENTICAÇÃO (LOGIN & DOWNLOAD PROTEGIDO)
+    // ==========================================================================
+    const AUTH_CONFIG = {
+      validUsers: ["aluno", "admin", "italo"],
+      validPasswords: ["lda2026", "aprovado"]
+    };
+    const AUTH_SESSION_KEY = 'lda2_auth_session_v1';
+
+    function checkAuthSession() {
+      try {
+        const isAuth = localStorage.getItem(AUTH_SESSION_KEY) || sessionStorage.getItem(AUTH_SESSION_KEY);
+        const overlay = document.getElementById('auth-overlay');
+        if (isAuth === 'true') {
+          if (overlay) {
+            overlay.classList.add('authenticated');
+            setTimeout(() => { overlay.style.display = 'none'; }, 350);
+          }
+        } else {
+          if (overlay) {
+            overlay.classList.remove('authenticated');
+            overlay.style.display = 'flex';
+          }
+        }
+      } catch (e) {
+        console.warn('Erro ao verificar sessão de login:', e);
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const userInp = document.getElementById('auth-user');
+      const passInp = document.getElementById('auth-pass');
+      const rememberInp = document.getElementById('auth-remember');
+      const errorMsg = document.getElementById('auth-error-msg');
+
+      const userVal = userInp ? userInp.value.trim().toLowerCase() : '';
+      const passVal = passInp ? passInp.value.trim() : '';
+
+      const isValidUser = AUTH_CONFIG.validUsers.includes(userVal);
+      const isValidPass = AUTH_CONFIG.validPasswords.includes(passVal);
+
+      if (isValidUser && isValidPass) {
+        if (errorMsg) errorMsg.style.display = 'none';
+        try {
+          if (rememberInp && rememberInp.checked) {
+            localStorage.setItem(AUTH_SESSION_KEY, 'true');
+          } else {
+            sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+          }
+        } catch (err) {}
+
+        const overlay = document.getElementById('auth-overlay');
+        if (overlay) {
+          overlay.classList.add('authenticated');
+          setTimeout(() => { overlay.style.display = 'none'; }, 350);
+        }
+      } else {
+        if (errorMsg) {
+          errorMsg.style.display = 'block';
+          if (passInp) {
+            passInp.value = '';
+            passInp.focus();
+          }
+        }
+      }
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input) {
+        if (input.type === 'password') {
+          input.type = 'text';
+          if (btn) btn.textContent = '🙈';
+        } else {
+          input.type = 'password';
+          if (btn) btn.textContent = '👁️';
+        }
+      }
+    }
+
+    function logoutPlatform() {
+      if (confirm("Deseja realmente sair e bloquear o acesso à plataforma?")) {
+        try {
+          localStorage.removeItem(AUTH_SESSION_KEY);
+          sessionStorage.removeItem(AUTH_SESSION_KEY);
+        } catch (e) {}
+        const overlay = document.getElementById('auth-overlay');
+        if (overlay) {
+          overlay.style.display = 'flex';
+          setTimeout(() => {
+            overlay.classList.remove('authenticated');
+            const userInp = document.getElementById('auth-user');
+            const passInp = document.getElementById('auth-pass');
+            if (userInp) userInp.value = '';
+            if (passInp) passInp.value = '';
+            if (userInp) userInp.focus();
+          }, 10);
+        }
+      }
+    }
+
+    // Modal de Download com Senha
+    function openDownloadModal() {
+      const modal = document.getElementById('download-modal');
+      const passInp = document.getElementById('download-pass');
+      const errorMsg = document.getElementById('download-error-msg');
+      if (errorMsg) errorMsg.style.display = 'none';
+      if (passInp) passInp.value = '';
+      if (modal) modal.style.display = 'flex';
+      if (passInp) setTimeout(() => passInp.focus(), 100);
+    }
+
+    function closeDownloadModal() {
+      const modal = document.getElementById('download-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function confirmDownloadPassword() {
+      const passInp = document.getElementById('download-pass');
+      const errorMsg = document.getElementById('download-error-msg');
+      const passVal = passInp ? passInp.value.trim() : '';
+
+      if (AUTH_CONFIG.validPasswords.includes(passVal)) {
+        if (errorMsg) errorMsg.style.display = 'none';
+        closeDownloadModal();
+        executeActualDownload();
+      } else {
+        if (errorMsg) {
+          errorMsg.style.display = 'block';
+          if (passInp) {
+            passInp.value = '';
+            passInp.focus();
+          }
+        }
+      }
+    }
+
+    function executeActualDownload() {
+      const htmlContent = '<!DOCTYPE html>' + String.fromCharCode(10) + document.documentElement.outerHTML;
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'LDA2_Livro_Digital_Aluno_Aprovado_Sistema_LMS_550Q.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }
+
+    // Vincula downloadHTML para abrir o modal protegido
+    function downloadHTML() {
+      openDownloadModal();
+    }
+
+
+
+    // ==========================================================================
     // SISTEMA LMS COM PERSISTÊNCIA, CÁLCULO SINCRONIZADO DE FORÇA E CHECKLIST
     // ==========================================================================
     const STORAGE_KEY = 'lda2_lms_550q_v1';
@@ -23268,11 +23785,13 @@ body.sidebar-collapsed .app-main {
 
     // Inicialização do sistema
     document.addEventListener('DOMContentLoaded', () => {
+      checkAuthSession();
       restoreSavedState();
     });
 
     // Chamada imediata como contingência caso o DOM já esteja carregado
     setTimeout(() => {
+      checkAuthSession();
       restoreSavedState();
     }, 150);
 
