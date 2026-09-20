@@ -1340,7 +1340,396 @@ tr:hover td { background-color: var(--slate-50); }
   .section-nav-footer { flex-direction: column; align-items: stretch; gap: 0.6rem; }
   .sec-nav-btn { justify-content: center; width: 100%; }
 }
-  </style>
+  
+/* ==========================================================================
+   PERSISTENT STORAGE, FORÇA DO PROGRESSO & CHECKLIST STYLES
+   ========================================================================== */
+.save-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--emerald-600);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+.save-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--emerald-500);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+  animation: pulseDot 2s infinite;
+}
+@keyframes pulseDot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Force Meter Container */
+.force-meter-container {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.6rem;
+  margin: 1.5rem 0;
+}
+.force-meter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+.force-meter-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.force-formula-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--violet-50);
+  color: var(--violet-700);
+  border: 1px solid var(--violet-200);
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+}
+.force-track {
+  height: 10px;
+  background: var(--slate-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 0.9rem;
+}
+.force-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+  border-radius: var(--radius-full);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.force-levels-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  text-align: center;
+}
+.force-step {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 4px;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.force-step.active {
+  border-color: var(--violet-500);
+  background: var(--violet-50);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+}
+.force-step.active .f-step-lbl {
+  color: var(--violet-700);
+  font-weight: 800;
+}
+.f-step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.f-step-lbl {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* Checklist Card Component */
+.checklist-card {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  margin: 2.5rem 0 3rem 0;
+  box-shadow: var(--shadow-md);
+}
+.checklist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  border-bottom: 2px solid var(--card-border);
+  padding-bottom: 1.4rem;
+  margin-bottom: 1.8rem;
+}
+.checklist-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--brand-600);
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+.checklist-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.checklist-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.chk-filter-btn {
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  color: var(--text-main);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.chk-filter-btn:hover {
+  background: var(--slate-200);
+  color: var(--text-heading);
+}
+.chk-filter-btn.active {
+  background: var(--brand-600);
+  border-color: var(--brand-700);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+}
+.btn-reset-all {
+  background: var(--rose-50);
+  border: 1px solid var(--rose-200);
+  color: var(--rose-700);
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.btn-reset-all:hover {
+  background: var(--rose-600);
+  color: #ffffff;
+  border-color: var(--rose-700);
+}
+
+.checklist-modules-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.chk-module-box {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.chk-module-box:hover {
+  border-color: var(--brand-300);
+}
+.chk-module-header {
+  padding: 1rem 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--slate-200);
+  transition: background 0.15s;
+}
+.chk-module-header:hover {
+  background: var(--slate-50);
+}
+.chk-module-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.chk-mod-icon {
+  font-size: 1.4rem;
+}
+.chk-mod-title {
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+.chk-mod-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.chk-mod-chevron {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+}
+.chk-module-box.collapsed .chk-mod-chevron {
+  transform: rotate(-90deg);
+}
+.chk-module-box.collapsed .chk-module-body {
+  display: none;
+}
+.chk-module-body {
+  padding: 0.8rem 1.2rem;
+}
+.chk-subtopics-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.chk-item-row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+.chk-item-row:hover {
+  border-color: var(--brand-300);
+  transform: translateX(2px);
+}
+.chk-item-row.is-done {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: var(--emerald-50);
+}
+.chk-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.chk-checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+.chk-input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--emerald-600);
+  cursor: pointer;
+}
+.chk-item-link {
+  text-decoration: none;
+  color: var(--text-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+.chk-item-link:hover {
+  color: var(--brand-600);
+  text-decoration: underline;
+}
+.chk-item-center {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.chk-mini-bar-bg {
+  height: 6px;
+  background: var(--slate-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.chk-mini-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--brand-500);
+  border-radius: var(--radius-full);
+  transition: width 0.3s;
+}
+.chk-item-row.is-done .chk-mini-bar-fill {
+  background: var(--emerald-500);
+}
+.chk-mini-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+}
+.chk-item-right {
+  flex-shrink: 0;
+}
+.chk-status-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.chk-status-badge.pending {
+  background: var(--slate-200);
+  color: var(--text-muted);
+}
+.chk-status-badge.progress {
+  background: var(--brand-100);
+  color: var(--brand-700);
+}
+.chk-status-badge.done {
+  background: var(--emerald-500);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+@media (max-width: 860px) {
+  .chk-item-row {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  .force-levels-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+</style>
 </head>
 <body>
 
@@ -1966,6 +2355,10 @@ tr:hover td { background-color: var(--slate-50); }
             <span id="sidebar-progress-text">0 de 550 questões</span>
             <span id="sidebar-acertos-text">0 acertos</span>
           </div>
+          <div class="sidebar-progress-sub" style="margin-top: 5px; padding-top: 5px; border-top: 1px dashed rgba(255,255,255,0.12);">
+            <span style="color: #f59e0b;">⏳ Falta: <strong id="sidebar-remaining-pct">100%</strong> (<span id="sidebar-remaining-count">550</span> Q)</span>
+            <span style="color: #a78bfa;">⚡ Força: <strong id="sidebar-force-pct">0%</strong></span>
+          </div>
         </div>
       </div>
     </aside>
@@ -1994,7 +2387,15 @@ tr:hover td { background-color: var(--slate-50); }
             <span class="stat-item-pill" style="color: var(--emerald-600);">✅ <strong id="topbar-correct">0</strong></span>
             <span class="stat-pill-divider">|</span>
             <span class="stat-item-pill" style="color: var(--brand-600);">🎯 <strong id="topbar-rate">0%</strong></span>
+            <span class="stat-pill-divider">|</span>
+            <span class="stat-item-pill" style="color: var(--accent-600);">⏳ Falta: <strong id="topbar-remaining-pct">100%</strong></span>
+            <span class="stat-pill-divider">|</span>
+            <span class="stat-item-pill" style="color: var(--violet-600);">⚡ Força: <strong id="topbar-force">0%</strong></span>
           </div>
+          
+          <a href="#checklist-dashboard" class="topbar-btn" onclick="handleNavClick('#checklist-dashboard')" title="Ir ao Checklist de Progresso">
+            <span>📋</span> <span>Checklist</span>
+          </a>
           
           <button class="topbar-btn" onclick="toggleTheme()" id="theme-toggle-btn" title="Alternar tema claro e escuro">
             <span id="theme-icon">🌙</span>
@@ -2040,7 +2441,7 @@ tr:hover td { background-color: var(--slate-50); }
         <!-- Global Dashboard -->
         <div class="global-dashboard" id="global-dashboard">
           <div class="dashboard-title">
-            <span>📊 Painel de Rendimento Acadêmico do Estudante</span>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"><span>📊 Painel de Rendimento Acadêmico do Estudante</span><span class="save-status-indicator" title="Progresso salvo automaticamente no navegador"><span class="save-dot"></span> Salvo no Navegador</span></div>
             <span style="font-size: 0.85rem; font-weight: 700; background: var(--brand-50); color: var(--brand-700); padding: 4px 12px; border-radius: var(--radius-full); border: 1px solid var(--brand-200);">550 Questões Comentadas ABCD</span>
           </div>
           
@@ -2048,18 +2449,70 @@ tr:hover td { background-color: var(--slate-50); }
             <div class="dashboard-metric">
               <span class="metric-num" id="global-answered">0</span>
               <span class="metric-lbl">Respondidas (de 550)</span>
+              <div id="global-answered-pct" style="font-size: 0.78rem; font-weight: 700; color: var(--brand-600); margin-top: 4px;">0% Concluído</div>
+            </div>
+            <div class="dashboard-metric" style="border-bottom: 3px solid var(--accent-500);">
+              <span class="metric-num" id="global-remaining-pct" style="color: var(--accent-600);">100%</span>
+              <span class="metric-lbl">Quanto Falta Estudar</span>
+              <div id="global-remaining-count" style="font-size: 0.78rem; font-weight: 700; color: var(--accent-700); margin-top: 4px;">550 questões restantes</div>
             </div>
             <div class="dashboard-metric" style="border-bottom: 3px solid var(--emerald-500);">
               <span class="metric-num" id="global-correct" style="color: var(--emerald-600);">0</span>
               <span class="metric-lbl">Acertos</span>
+              <div id="global-correct-pct" style="font-size: 0.78rem; font-weight: 700; color: var(--emerald-700); margin-top: 4px;">0% do total</div>
             </div>
             <div class="dashboard-metric" style="border-bottom: 3px solid var(--rose-500);">
               <span class="metric-num" id="global-incorrect" style="color: var(--rose-600);">0</span>
               <span class="metric-lbl">Erros</span>
+              <div id="global-incorrect-pct" style="font-size: 0.78rem; font-weight: 700; color: var(--rose-700); margin-top: 4px;">0% do total</div>
             </div>
             <div class="dashboard-metric" style="border-bottom: 3px solid var(--brand-500);">
               <span class="metric-num" id="global-rate" style="color: var(--brand-600);">0%</span>
               <span class="metric-lbl">Aproveitamento</span>
+              <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-top: 4px;">Taxa de precisão</div>
+            </div>
+            <div class="dashboard-metric" style="border-bottom: 3px solid var(--violet-600);">
+              <span class="metric-num" id="global-force" style="color: var(--violet-600);">0%</span>
+              <span class="metric-lbl">⚡ Força do Progresso</span>
+              <div id="global-force-level" style="font-size: 0.78rem; font-weight: 800; color: var(--violet-700); margin-top: 4px;">🛡️ Nível 1: Inicial</div>
+            </div>
+          </div>
+
+          <!-- CARDS DE FORÇA DO PROGRESSO & RETENÇÃO ACADÊMICA -->
+          <div class="force-meter-container">
+            <div class="force-meter-header">
+              <div class="force-meter-title">
+                <span>⚡ Força do Progresso &amp; Nível de Domínio:</span>
+                <strong id="force-level-title" style="color: var(--violet-600);">0% • 🛡️ Fase Inicial de Estudo</strong>
+              </div>
+              <div class="force-formula-tag" title="A Força do Progresso pondera a cobertura de questões respondidas com o aproveitamento de acertos.">
+                Fórmula: % Concluído × % Acertos
+              </div>
+            </div>
+            <div class="force-track">
+              <div class="force-fill" id="force-bar-fill" style="width: 0%;"></div>
+            </div>
+            <div class="force-levels-grid">
+              <div class="force-step active" id="f-step-1">
+                <span class="f-step-num">0 - 20%</span>
+                <span class="f-step-lbl">🛡️ Inicial</span>
+              </div>
+              <div class="force-step" id="f-step-2">
+                <span class="f-step-num">21 - 40%</span>
+                <span class="f-step-lbl">⚡ Construção</span>
+              </div>
+              <div class="force-step" id="f-step-3">
+                <span class="f-step-num">41 - 60%</span>
+                <span class="f-step-lbl">🎯 Consistente</span>
+              </div>
+              <div class="force-step" id="f-step-4">
+                <span class="f-step-num">61 - 80%</span>
+                <span class="f-step-lbl">🎖️ Avançado</span>
+              </div>
+              <div class="force-step" id="f-step-5">
+                <span class="f-step-num">81 - 100%</span>
+                <span class="f-step-lbl">🏆 Força de Elite</span>
+              </div>
             </div>
           </div>
 
@@ -2135,6 +2588,1608 @@ tr:hover td { background-color: var(--slate-50); }
               </div>
             </div>
           </div>
+        
+<!-- CHECKLIST INTERATIVO DE PROGRESSO -->
+<div class="checklist-card" id="checklist-dashboard">
+  <div class="checklist-header">
+    <div>
+      <div class="checklist-badge">⚡ SALVAMENTO AUTOMÁTICO ATIVO NO NAVEGADOR</div>
+      <h2 style="margin: 0; border: none; padding: 0; font-size: 1.4rem;">📋 Checklist de Progresso por Tópicos &amp; Subtópicos</h2>
+      <p style="margin: 4px 0 0 0; color: var(--text-muted); font-size: 0.88rem;">
+        Monitore seu cumprimento tópico a tópico, a força de retenção acadêmica e a porcentagem que falta para a conclusão das 550 questões.
+      </p>
+    </div>
+    
+    <div class="checklist-actions">
+      <div class="checklist-filters">
+        <button class="chk-filter-btn active" data-filter="all" onclick="filterChecklist('all', this)">Todos (55)</button>
+        <button class="chk-filter-btn" data-filter="progress" onclick="filterChecklist('progress', this)">Em Andamento (<span id="chk-count-progress">0</span>)</button>
+        <button class="chk-filter-btn" data-filter="done" onclick="filterChecklist('done', this)">Concluídos (<span id="chk-count-done">0</span>)</button>
+        <button class="chk-filter-btn" data-filter="pending" onclick="filterChecklist('pending', this)">Pendentes (<span id="chk-count-pending">55</span>)</button>
+      </div>
+      <button class="btn-reset-all" onclick="resetAllProgress()" title="Zerar todas as questões e o progresso gravado neste navegador">
+        <span>🔄</span> <span>Zerar Progresso</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="checklist-modules-grid">
+
+    <div class="chk-module-box" data-module="1" style="border-left: 4px solid var(--brand-600);">
+      <div class="chk-module-header" onclick="toggleChkModule(this)">
+        <div class="chk-module-header-left">
+          <span class="chk-mod-icon">📘</span>
+          <div>
+            <div class="chk-mod-title">Módulo I: Obtenção de Elementos</div>
+            <div class="chk-mod-sub"><span id="chk-mod-1-stat">0/60</span> questões concluídas • <span id="chk-mod-1-pct">0%</span></div>
+          </div>
+        </div>
+        <div class="chk-module-header-right">
+          <span class="chk-mod-chevron">▼</span>
+        </div>
+      </div>
+      <div class="chk-module-body">
+        <ul class="chk-subtopics-list">
+    
+          <li class="chk-item-row" id="chk-row-1" data-sub="1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-1" class="chk-input" onchange="toggleManualSubtopicCheck('1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-1" class="chk-item-link" onclick="handleNavClick('#sec-1')">
+                1. Introdução à Investigação
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-1">0/10 Q</span>
+                <span id="chk-acc-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-2" data-sub="2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-2" class="chk-input" onchange="toggleManualSubtopicCheck('2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-2" class="chk-item-link" onclick="handleNavClick('#sec-2')">
+                2. Ação de Obtenção
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-2">0/10 Q</span>
+                <span id="chk-acc-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-2-1" data-sub="2-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-2-1" class="chk-input" onchange="toggleManualSubtopicCheck('2-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-2-1" class="chk-item-link" onclick="handleNavClick('#sec-2-1')">
+                2.1 Critérios para Seleção
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-2-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-2-1">0/10 Q</span>
+                <span id="chk-acc-2-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-2-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-2-2" data-sub="2-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-2-2" class="chk-input" onchange="toggleManualSubtopicCheck('2-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-2-2" class="chk-item-link" onclick="handleNavClick('#sec-2-2')">
+                2.2 Encadeamento e Integração
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-2-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-2-2">0/10 Q</span>
+                <span id="chk-acc-2-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-2-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-2-3" data-sub="2-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-2-3" class="chk-input" onchange="toggleManualSubtopicCheck('2-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-2-3" class="chk-item-link" onclick="handleNavClick('#sec-2-3')">
+                2.3 Dados Sensíveis / Custódia
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-2-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-2-3">0/10 Q</span>
+                <span id="chk-acc-2-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-2-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-2-4" data-sub="2-4" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-2-4" class="chk-input" onchange="toggleManualSubtopicCheck('2-4', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-2-4" class="chk-item-link" onclick="handleNavClick('#sec-2-4')">
+                2.4 Etapas da Coleta (Projeto)
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-2-4" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-2-4">0/10 Q</span>
+                <span id="chk-acc-2-4" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-2-4">Pendente</span>
+            </div>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+    
+    <div class="chk-module-box" data-module="2" style="border-left: 4px solid var(--violet-600);">
+      <div class="chk-module-header" onclick="toggleChkModule(this)">
+        <div class="chk-module-header-left">
+          <span class="chk-mod-icon">📝</span>
+          <div>
+            <div class="chk-mod-title">Módulo II: Formalização de Dados</div>
+            <div class="chk-mod-sub"><span id="chk-mod-2-stat">0/100</span> questões concluídas • <span id="chk-mod-2-pct">0%</span></div>
+          </div>
+        </div>
+        <div class="chk-module-header-right">
+          <span class="chk-mod-chevron">▼</span>
+        </div>
+      </div>
+      <div class="chk-module-body">
+        <ul class="chk-subtopics-list">
+    
+          <li class="chk-item-row" id="chk-row-4" data-sub="4" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-4" class="chk-input" onchange="toggleManualSubtopicCheck('4', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-4" class="chk-item-link" onclick="handleNavClick('#sec-4')">
+                4. Formalização de Dados
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-4" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-4">0/10 Q</span>
+                <span id="chk-acc-4" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-4">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-4-1" data-sub="4-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-4-1" class="chk-input" onchange="toggleManualSubtopicCheck('4-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-4-1" class="chk-item-link" onclick="handleNavClick('#sec-4-1')">
+                4.1 Fundamentação (Art. 9º)
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-4-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-4-1">0/10 Q</span>
+                <span id="chk-acc-4-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-4-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-4-2" data-sub="4-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-4-2" class="chk-input" onchange="toggleManualSubtopicCheck('4-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-4-2" class="chk-item-link" onclick="handleNavClick('#sec-4-2')">
+                4.2 IN 255 e Redação Oficial
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-4-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-4-2">0/10 Q</span>
+                <span id="chk-acc-4-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-4-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-4-3" data-sub="4-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-4-3" class="chk-input" onchange="toggleManualSubtopicCheck('4-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-4-3" class="chk-item-link" onclick="handleNavClick('#sec-4-3')">
+                4.3 Audiências e Entrevistas
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-4-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-4-3">0/10 Q</span>
+                <span id="chk-acc-4-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-4-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-4-4" data-sub="4-4" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-4-4" class="chk-input" onchange="toggleManualSubtopicCheck('4-4', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-4-4" class="chk-item-link" onclick="handleNavClick('#sec-4-4')">
+                4.4 Reconhecimento de Pessoas
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-4-4" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-4-4">0/10 Q</span>
+                <span id="chk-acc-4-4" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-4-4">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-4-5" data-sub="4-5" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-4-5" class="chk-input" onchange="toggleManualSubtopicCheck('4-5', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-4-5" class="chk-item-link" onclick="handleNavClick('#sec-4-5')">
+                4.5 Exame Pericial, SNC e Degrav.
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-4-5" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-4-5">0/10 Q</span>
+                <span id="chk-acc-4-5" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-4-5">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-4-6-1" data-sub="4-6-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-4-6-1" class="chk-input" onchange="toggleManualSubtopicCheck('4-6-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-4-6-1" class="chk-item-link" onclick="handleNavClick('#sec-4-6-1')">
+                4.6.1 IPJ: Expositiva e Arg.
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-4-6-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-4-6-1">0/10 Q</span>
+                <span id="chk-acc-4-6-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-4-6-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-4-6-2" data-sub="4-6-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-4-6-2" class="chk-input" onchange="toggleManualSubtopicCheck('4-6-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-4-6-2" class="chk-item-link" onclick="handleNavClick('#sec-4-6-2')">
+                4.6.2 Boas/Más Práticas e IA
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-4-6-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-4-6-2">0/10 Q</span>
+                <span id="chk-acc-4-6-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-4-6-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-4-6-3" data-sub="4-6-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-4-6-3" class="chk-input" onchange="toggleManualSubtopicCheck('4-6-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-4-6-3" class="chk-item-link" onclick="handleNavClick('#sec-4-6-3')">
+                4.6.3 Auto Circunstanciado
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-4-6-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-4-6-3">0/10 Q</span>
+                <span id="chk-acc-4-6-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-4-6-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-4-7" data-sub="4-7" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-4-7" class="chk-input" onchange="toggleManualSubtopicCheck('4-7', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-4-7" class="chk-item-link" onclick="handleNavClick('#sec-4-7')">
+                4.7 Oficina Prática (Caso)
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-4-7" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-4-7">0/10 Q</span>
+                <span id="chk-acc-4-7" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-4-7">Pendente</span>
+            </div>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+    
+    <div class="chk-module-box" data-module="5" style="border-left: 4px solid var(--emerald-600);">
+      <div class="chk-module-header" onclick="toggleChkModule(this)">
+        <div class="chk-module-header-left">
+          <span class="chk-mod-icon">🌐</span>
+          <div>
+            <div class="chk-mod-title">Módulo V: Fontes Abertas (OSINT)</div>
+            <div class="chk-mod-sub"><span id="chk-mod-5-stat">0/60</span> questões concluídas • <span id="chk-mod-5-pct">0%</span></div>
+          </div>
+        </div>
+        <div class="chk-module-header-right">
+          <span class="chk-mod-chevron">▼</span>
+        </div>
+      </div>
+      <div class="chk-module-body">
+        <ul class="chk-subtopics-list">
+    
+          <li class="chk-item-row" id="chk-row-5-1-1" data-sub="5-1-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-5-1-1" class="chk-input" onchange="toggleManualSubtopicCheck('5-1-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-5-1-1" class="chk-item-link" onclick="handleNavClick('#sec-5-1-1')">
+                3.1.1 Introdução OSINT/Leis
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-5-1-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-5-1-1">0/10 Q</span>
+                <span id="chk-acc-5-1-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-5-1-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-5-1-2" data-sub="5-1-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-5-1-2" class="chk-input" onchange="toggleManualSubtopicCheck('5-1-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-5-1-2" class="chk-item-link" onclick="handleNavClick('#sec-5-1-2')">
+                3.1.2 4 Categorias de Fontes
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-5-1-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-5-1-2">0/10 Q</span>
+                <span id="chk-acc-5-1-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-5-1-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-5-1-3" data-sub="5-1-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-5-1-3" class="chk-input" onchange="toggleManualSubtopicCheck('5-1-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-5-1-3" class="chk-item-link" onclick="handleNavClick('#sec-5-1-3')">
+                3.1.3 Motores e Dorks Avanç.
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-5-1-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-5-1-3">0/10 Q</span>
+                <span id="chk-acc-5-1-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-5-1-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-5-2-1" data-sub="5-2-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-5-2-1" class="chk-input" onchange="toggleManualSubtopicCheck('5-2-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-5-2-1" class="chk-item-link" onclick="handleNavClick('#sec-5-2-1')">
+                3.2.1 Preservação e Redes
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-5-2-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-5-2-1">0/10 Q</span>
+                <span id="chk-acc-5-2-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-5-2-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-5-2-2" data-sub="5-2-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-5-2-2" class="chk-input" onchange="toggleManualSubtopicCheck('5-2-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-5-2-2" class="chk-item-link" onclick="handleNavClick('#sec-5-2-2')">
+                3.2.2 Geolocalização e Reversa
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-5-2-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-5-2-2">0/10 Q</span>
+                <span id="chk-acc-5-2-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-5-2-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-5-2-3" data-sub="5-2-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-5-2-3" class="chk-input" onchange="toggleManualSubtopicCheck('5-2-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-5-2-3" class="chk-item-link" onclick="handleNavClick('#sec-5-2-3')">
+                3.2.3 Casos Operac. e Custódia
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-5-2-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-5-2-3">0/10 Q</span>
+                <span id="chk-acc-5-2-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-5-2-3">Pendente</span>
+            </div>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+    
+    <div class="chk-module-box" data-module="6" style="border-left: 4px solid var(--accent-600);">
+      <div class="chk-module-header" onclick="toggleChkModule(this)">
+        <div class="chk-module-header-left">
+          <span class="chk-mod-icon">🗄️</span>
+          <div>
+            <div class="chk-mod-title">Módulo VI: Bancos & BI</div>
+            <div class="chk-mod-sub"><span id="chk-mod-6-stat">0/60</span> questões concluídas • <span id="chk-mod-6-pct">0%</span></div>
+          </div>
+        </div>
+        <div class="chk-module-header-right">
+          <span class="chk-mod-chevron">▼</span>
+        </div>
+      </div>
+      <div class="chk-module-body">
+        <ul class="chk-subtopics-list">
+    
+          <li class="chk-item-row" id="chk-row-6-1-1" data-sub="6-1-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-6-1-1" class="chk-input" onchange="toggleManualSubtopicCheck('6-1-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-6-1-1" class="chk-item-link" onclick="handleNavClick('#sec-6-1-1')">
+                6.1.1 Bancos Conveniados
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-6-1-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-6-1-1">0/10 Q</span>
+                <span id="chk-acc-6-1-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-6-1-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-6-1-2" data-sub="6-1-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-6-1-2" class="chk-input" onchange="toggleManualSubtopicCheck('6-1-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-6-1-2" class="chk-item-link" onclick="handleNavClick('#sec-6-1-2')">
+                6.1.2 Bases Internas (NEXO)
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-6-1-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-6-1-2">0/10 Q</span>
+                <span id="chk-acc-6-1-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-6-1-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-6-1-3" data-sub="6-1-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-6-1-3" class="chk-input" onchange="toggleManualSubtopicCheck('6-1-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-6-1-3" class="chk-item-link" onclick="handleNavClick('#sec-6-1-3')">
+                6.1.3 Arquitetura Qlik Sense
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-6-1-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-6-1-3">0/10 Q</span>
+                <span id="chk-acc-6-1-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-6-1-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-6-2-1" data-sub="6-2-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-6-2-1" class="chk-input" onchange="toggleManualSubtopicCheck('6-2-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-6-2-1" class="chk-item-link" onclick="handleNavClick('#sec-6-2-1')">
+                6.2.1 Instalação/Autenticação
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-6-2-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-6-2-1">0/10 Q</span>
+                <span id="chk-acc-6-2-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-6-2-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-6-2-2" data-sub="6-2-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-6-2-2" class="chk-input" onchange="toggleManualSubtopicCheck('6-2-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-6-2-2" class="chk-item-link" onclick="handleNavClick('#sec-6-2-2')">
+                6.2.2 Dinâmicas e Marcadores
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-6-2-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-6-2-2">0/10 Q</span>
+                <span id="chk-acc-6-2-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-6-2-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-6-2-3" data-sub="6-2-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-6-2-3" class="chk-input" onchange="toggleManualSubtopicCheck('6-2-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-6-2-3" class="chk-item-link" onclick="handleNavClick('#sec-6-2-3')">
+                6.2.3 Análise Cadastral e Vínculos
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-6-2-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-6-2-3">0/10 Q</span>
+                <span id="chk-acc-6-2-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-6-2-3">Pendente</span>
+            </div>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+    
+    <div class="chk-module-box" data-module="7" style="border-left: 4px solid #10b981;">
+      <div class="chk-module-header" onclick="toggleChkModule(this)">
+        <div class="chk-module-header-left">
+          <span class="chk-mod-icon">🕸️</span>
+          <div>
+            <div class="chk-mod-title">Módulo VII: Vínculos (i2)</div>
+            <div class="chk-mod-sub"><span id="chk-mod-7-stat">0/90</span> questões concluídas • <span id="chk-mod-7-pct">0%</span></div>
+          </div>
+        </div>
+        <div class="chk-module-header-right">
+          <span class="chk-mod-chevron">▼</span>
+        </div>
+      </div>
+      <div class="chk-module-body">
+        <ul class="chk-subtopics-list">
+    
+          <li class="chk-item-row" id="chk-row-7-1-1" data-sub="7-1-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-7-1-1" class="chk-input" onchange="toggleManualSubtopicCheck('7-1-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-7-1-1" class="chk-item-link" onclick="handleNavClick('#sec-7-1-1')">
+                7.1.1 Teoria dos Grafos & SNA
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-7-1-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-7-1-1">0/10 Q</span>
+                <span id="chk-acc-7-1-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-7-1-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-7-1-2" data-sub="7-1-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-7-1-2" class="chk-input" onchange="toggleManualSubtopicCheck('7-1-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-7-1-2" class="chk-item-link" onclick="handleNavClick('#sec-7-1-2')">
+                7.1.2 Suíte i2 (Entidades/Vínculos)
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-7-1-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-7-1-2">0/10 Q</span>
+                <span id="chk-acc-7-1-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-7-1-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-7-1-3" data-sub="7-1-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-7-1-3" class="chk-input" onchange="toggleManualSubtopicCheck('7-1-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-7-1-3" class="chk-item-link" onclick="handleNavClick('#sec-7-1-3')">
+                7.1.3 Padronização de Identidades
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-7-1-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-7-1-3">0/10 Q</span>
+                <span id="chk-acc-7-1-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-7-1-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-7-2-1" data-sub="7-2-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-7-2-1" class="chk-input" onchange="toggleManualSubtopicCheck('7-2-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-7-2-1" class="chk-item-link" onclick="handleNavClick('#sec-7-2-1')">
+                7.2.1 Especificações de Importação
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-7-2-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-7-2-1">0/10 Q</span>
+                <span id="chk-acc-7-2-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-7-2-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-7-2-2" data-sub="7-2-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-7-2-2" class="chk-input" onchange="toggleManualSubtopicCheck('7-2-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-7-2-2" class="chk-item-link" onclick="handleNavClick('#sec-7-2-2')">
+                7.2.2 Telefonia e Multiplicidade
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-7-2-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-7-2-2">0/10 Q</span>
+                <span id="chk-acc-7-2-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-7-2-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-7-2-3" data-sub="7-2-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-7-2-3" class="chk-input" onchange="toggleManualSubtopicCheck('7-2-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-7-2-3" class="chk-item-link" onclick="handleNavClick('#sec-7-2-3')">
+                7.2.3 Publicação e Exportação PDF
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-7-2-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-7-2-3">0/10 Q</span>
+                <span id="chk-acc-7-2-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-7-2-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-7-3-1" data-sub="7-3-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-7-3-1" class="chk-input" onchange="toggleManualSubtopicCheck('7-3-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-7-3-1" class="chk-item-link" onclick="handleNavClick('#sec-7-3-1')">
+                7.3.1 Listagem & Mais Conectados
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-7-3-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-7-3-1">0/10 Q</span>
+                <span id="chk-acc-7-3-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-7-3-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-7-3-2" data-sub="7-3-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-7-3-2" class="chk-input" onchange="toggleManualSubtopicCheck('7-3-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-7-3-2" class="chk-item-link" onclick="handleNavClick('#sec-7-3-2')">
+                7.3.2 Redes, Caminhos e Mesclagem
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-7-3-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-7-3-2">0/10 Q</span>
+                <span id="chk-acc-7-3-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-7-3-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-7-3-3" data-sub="7-3-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-7-3-3" class="chk-input" onchange="toggleManualSubtopicCheck('7-3-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-7-3-3" class="chk-item-link" onclick="handleNavClick('#sec-7-3-3')">
+                7.3.3 Histogramas & Aplicações
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-7-3-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-7-3-3">0/10 Q</span>
+                <span id="chk-acc-7-3-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-7-3-3">Pendente</span>
+            </div>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+    
+    <div class="chk-module-box" data-module="8" style="border-left: 4px solid #d97706;">
+      <div class="chk-module-header" onclick="toggleChkModule(this)">
+        <div class="chk-module-header-left">
+          <span class="chk-mod-icon">💰</span>
+          <div>
+            <div class="chk-mod-title">Módulo VIII: RIF (COAF)</div>
+            <div class="chk-mod-sub"><span id="chk-mod-8-stat">0/90</span> questões concluídas • <span id="chk-mod-8-pct">0%</span></div>
+          </div>
+        </div>
+        <div class="chk-module-header-right">
+          <span class="chk-mod-chevron">▼</span>
+        </div>
+      </div>
+      <div class="chk-module-body">
+        <ul class="chk-subtopics-list">
+    
+          <li class="chk-item-row" id="chk-row-8-1-1" data-sub="8-1-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-8-1-1" class="chk-input" onchange="toggleManualSubtopicCheck('8-1-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-8-1-1" class="chk-item-link" onclick="handleNavClick('#sec-8-1-1')">
+                8.1.1 Intro COAF / Base Legal
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-8-1-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-8-1-1">0/10 Q</span>
+                <span id="chk-acc-8-1-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-8-1-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-8-1-2" data-sub="8-1-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-8-1-2" class="chk-input" onchange="toggleManualSubtopicCheck('8-1-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-8-1-2" class="chk-item-link" onclick="handleNavClick('#sec-8-1-2')">
+                8.1.2 Modalidades, Egmont e MP
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-8-1-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-8-1-2">0/10 Q</span>
+                <span id="chk-acc-8-1-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-8-1-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-8-1-3" data-sub="8-1-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-8-1-3" class="chk-input" onchange="toggleManualSubtopicCheck('8-1-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-8-1-3" class="chk-item-link" onclick="handleNavClick('#sec-8-1-3')">
+                8.1.3 COS vs. COE e Recebimento
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-8-1-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-8-1-3">0/10 Q</span>
+                <span id="chk-acc-8-1-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-8-1-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-8-2-1" data-sub="8-2-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-8-2-1" class="chk-input" onchange="toggleManualSubtopicCheck('8-2-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-8-2-1" class="chk-item-link" onclick="handleNavClick('#sec-8-2-1')">
+                8.2.1 Metodologia: Passos 1 e 2
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-8-2-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-8-2-1">0/10 Q</span>
+                <span id="chk-acc-8-2-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-8-2-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-8-2-2" data-sub="8-2-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-8-2-2" class="chk-input" onchange="toggleManualSubtopicCheck('8-2-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-8-2-2" class="chk-item-link" onclick="handleNavClick('#sec-8-2-2')">
+                8.2.2 Qlik Sense e EXTRATOR RIF
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-8-2-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-8-2-2">0/10 Q</span>
+                <span id="chk-acc-8-2-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-8-2-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-8-2-3" data-sub="8-2-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-8-2-3" class="chk-input" onchange="toggleManualSubtopicCheck('8-2-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-8-2-3" class="chk-item-link" onclick="handleNavClick('#sec-8-2-3')">
+                8.2.3 Integração com i2 Analyst's
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-8-2-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-8-2-3">0/10 Q</span>
+                <span id="chk-acc-8-2-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-8-2-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-8-3-1" data-sub="8-3-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-8-3-1" class="chk-input" onchange="toggleManualSubtopicCheck('8-3-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-8-3-1" class="chk-item-link" onclick="handleNavClick('#sec-8-3-1')">
+                8.3.1 Pesquisas Externas (OSINT)
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-8-3-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-8-3-1">0/10 Q</span>
+                <span id="chk-acc-8-3-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-8-3-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-8-3-2" data-sub="8-3-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-8-3-2" class="chk-input" onchange="toggleManualSubtopicCheck('8-3-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-8-3-2" class="chk-item-link" onclick="handleNavClick('#sec-8-3-2')">
+                8.3.2 Análise Integrada e IPJ
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-8-3-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-8-3-2">0/10 Q</span>
+                <span id="chk-acc-8-3-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-8-3-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-8-3-3" data-sub="8-3-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-8-3-3" class="chk-input" onchange="toggleManualSubtopicCheck('8-3-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-8-3-3" class="chk-item-link" onclick="handleNavClick('#sec-8-3-3')">
+                8.3.3 Casos e RIFs Espontâneos
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-8-3-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-8-3-3">0/10 Q</span>
+                <span id="chk-acc-8-3-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-8-3-3">Pendente</span>
+            </div>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+    
+    <div class="chk-module-box" data-module="9" style="border-left: 4px solid #0891b2;">
+      <div class="chk-module-header" onclick="toggleChkModule(this)">
+        <div class="chk-module-header-left">
+          <span class="chk-mod-icon">🕵️‍♂️</span>
+          <div>
+            <div class="chk-mod-title">Módulo IX: Encobertas & Infiltração</div>
+            <div class="chk-mod-sub"><span id="chk-mod-9-stat">0/90</span> questões concluídas • <span id="chk-mod-9-pct">0%</span></div>
+          </div>
+        </div>
+        <div class="chk-module-header-right">
+          <span class="chk-mod-chevron">▼</span>
+        </div>
+      </div>
+      <div class="chk-module-body">
+        <ul class="chk-subtopics-list">
+    
+          <li class="chk-item-row" id="chk-row-9-1-1" data-sub="9-1-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-9-1-1" class="chk-input" onchange="toggleManualSubtopicCheck('9-1-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-9-1-1" class="chk-item-link" onclick="handleNavClick('#sec-9-1-1')">
+                9.1.1 Ações Encobertas e Tipos
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-9-1-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-9-1-1">0/10 Q</span>
+                <span id="chk-acc-9-1-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-9-1-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-9-1-2" data-sub="9-1-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-9-1-2" class="chk-input" onchange="toggleManualSubtopicCheck('9-1-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-9-1-2" class="chk-item-link" onclick="handleNavClick('#sec-9-1-2')">
+                9.1.2 Vigilância e Backstopping
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-9-1-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-9-1-2">0/10 Q</span>
+                <span id="chk-acc-9-1-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-9-1-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-9-1-3" data-sub="9-1-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-9-1-3" class="chk-input" onchange="toggleManualSubtopicCheck('9-1-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-9-1-3" class="chk-item-link" onclick="handleNavClick('#sec-9-1-3')">
+                9.1.3 História-Cobertura e Rapport
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-9-1-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-9-1-3">0/10 Q</span>
+                <span id="chk-acc-9-1-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-9-1-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-9-2-1" data-sub="9-2-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-9-2-1" class="chk-input" onchange="toggleManualSubtopicCheck('9-2-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-9-2-1" class="chk-item-link" onclick="handleNavClick('#sec-9-2-1')">
+                9.2.1 Testemunhas e Suspeitos
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-9-2-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-9-2-1">0/10 Q</span>
+                <span id="chk-acc-9-2-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-9-2-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-9-2-2" data-sub="9-2-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-9-2-2" class="chk-input" onchange="toggleManualSubtopicCheck('9-2-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-9-2-2" class="chk-item-link" onclick="handleNavClick('#sec-9-2-2')">
+                9.2.2 Fontes Ocultas (Informantes)
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-9-2-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-9-2-2">0/10 Q</span>
+                <span id="chk-acc-9-2-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-9-2-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-9-2-3" data-sub="9-2-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-9-2-3" class="chk-input" onchange="toggleManualSubtopicCheck('9-2-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-9-2-3" class="chk-item-link" onclick="handleNavClick('#sec-9-2-3')">
+                9.2.3 Entrevista Policial vs. TQI
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-9-2-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-9-2-3">0/10 Q</span>
+                <span id="chk-acc-9-2-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-9-2-3">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-9-3-1" data-sub="9-3-1" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-9-3-1" class="chk-input" onchange="toggleManualSubtopicCheck('9-3-1', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-9-3-1" class="chk-item-link" onclick="handleNavClick('#sec-9-3-1')">
+                9.3.1 Infiltração e Exfiltração
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-9-3-1" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-9-3-1">0/10 Q</span>
+                <span id="chk-acc-9-3-1" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-9-3-1">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-9-3-2" data-sub="9-3-2" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-9-3-2" class="chk-input" onchange="toggleManualSubtopicCheck('9-3-2', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-9-3-2" class="chk-item-link" onclick="handleNavClick('#sec-9-3-2')">
+                9.3.2 Direitos, Excludente e Limites
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-9-3-2" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-9-3-2">0/10 Q</span>
+                <span id="chk-acc-9-3-2" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-9-3-2">Pendente</span>
+            </div>
+          </li>
+        
+          <li class="chk-item-row" id="chk-row-9-3-3" data-sub="9-3-3" data-status="pending">
+            <div class="chk-item-left">
+              <label class="chk-checkbox-label" title="Clique para marcar como concluído ou responda as 10 questões do subtópico">
+                <input type="checkbox" id="chk-check-9-3-3" class="chk-input" onchange="toggleManualSubtopicCheck('9-3-3', this.checked)">
+                <span class="chk-checkmark"></span>
+              </label>
+              <a href="#sec-9-3-3" class="chk-item-link" onclick="handleNavClick('#sec-9-3-3')">
+                9.3.3 Infiltração Virtual e Ação Controlada
+              </a>
+            </div>
+            
+            <div class="chk-item-center">
+              <div class="chk-mini-bar-bg">
+                <div class="chk-mini-bar-fill" id="chk-bar-9-3-3" style="width: 0%;"></div>
+              </div>
+              <div class="chk-mini-stat">
+                <span id="chk-txt-9-3-3">0/10 Q</span>
+                <span id="chk-acc-9-3-3" style="display:none; color: var(--emerald-600); font-weight:700;">• 0%</span>
+              </div>
+            </div>
+
+            <div class="chk-item-right">
+              <span class="chk-status-badge pending" id="chk-badge-9-3-3">Pendente</span>
+            </div>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+    
+  </div>
+</div>
+<!-- FIM CHECKLIST INTERATIVO DE PROGRESSO -->
+
+
         </div>
 
         <!-- Visual Legend Bar -->
@@ -20340,18 +22395,24 @@ tr:hover td { background-color: var(--slate-50); }
 
   <!-- SCRIPT DO SISTEMA -->
   <script>
+
+    // ==========================================================================
+    // SISTEMA LMS COM PERSISTÊNCIA LOCALSTORAGE, FORÇA DO PROGRESSO & CHECKLIST
+    // ==========================================================================
+    const STORAGE_KEY = 'lda2_lms_550q_v1';
+    
     let globalAnswered = 0;
     let globalCorrect = 0;
     let globalIncorrect = 0;
 
-    const moduleCounts = {
-      1: { answered: 0, total: 60 },
-      2: { answered: 0, total: 100 },
-      5: { answered: 0, total: 60 },
-      6: { answered: 0, total: 60 },
-      7: { answered: 0, total: 90 },
-      8: { answered: 0, total: 90 },
-      9: { answered: 0, total: 90 }
+    const moduleTotals = {
+      1: { total: 60 },
+      2: { total: 100 },
+      5: { total: 60 },
+      6: { total: 60 },
+      7: { total: 90 },
+      8: { total: 90 },
+      9: { total: 90 }
     };
 
     const subtopicModuleMap = {
@@ -20450,6 +22511,7 @@ tr:hover td { background-color: var(--slate-50); }
       "sec-resumo-mod9-u3": "🎓 Resumo: Módulo IX — Unidade 03"
     };
 
+    // --- FUNÇÕES DE NAVEGAÇÃO, SIDEBAR E TEMA ---
     function toggleSidebar() {
       const sidebar = document.getElementById('app-sidebar');
       const backdrop = document.getElementById('sidebar-backdrop');
@@ -20471,13 +22533,16 @@ tr:hover td { background-color: var(--slate-50); }
 
     function handleNavClick(targetHash) {
       if (window.innerWidth <= 1024) {
-        document.getElementById('app-sidebar').classList.remove('open');
-        document.getElementById('sidebar-backdrop').classList.remove('show');
+        const sb = document.getElementById('app-sidebar');
+        const bd = document.getElementById('sidebar-backdrop');
+        if (sb) sb.classList.remove('open');
+        if (bd) bd.classList.remove('show');
       }
       
       const targetEl = document.querySelector(targetHash);
       if (targetEl) {
-        const topbarHeight = document.getElementById('app-topbar').offsetHeight;
+        const topbar = document.getElementById('app-topbar');
+        const topbarHeight = topbar ? topbar.offsetHeight : 64;
         const y = targetEl.getBoundingClientRect().top + window.scrollY - topbarHeight - 20;
         window.scrollTo({ top: y, behavior: 'smooth' });
       }
@@ -20501,7 +22566,7 @@ tr:hover td { background-color: var(--slate-50); }
     function filterSidebar(query) {
       const q = query.trim().toLowerCase();
       const clearBtn = document.getElementById('search-clear-btn');
-      clearBtn.style.display = q ? 'block' : 'none';
+      if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
 
       document.querySelectorAll('.nav-module-block').forEach(block => {
         let hasMatch = false;
@@ -20526,26 +22591,35 @@ tr:hover td { background-color: var(--slate-50); }
 
     function clearSidebarSearch() {
       const inp = document.getElementById('sidebar-search-input');
-      inp.value = '';
-      filterSidebar('');
-      inp.focus();
+      if (inp) {
+        inp.value = '';
+        filterSidebar('');
+        inp.focus();
+      }
     }
 
     function toggleTheme() {
       document.body.classList.toggle('dark-theme');
       const isDark = document.body.classList.contains('dark-theme');
-      document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
-      localStorage.setItem('lda2_theme', isDark ? 'dark' : 'light');
+      const themeIcon = document.getElementById('theme-icon');
+      if (themeIcon) themeIcon.textContent = isDark ? '☀️' : '🌙';
+      try {
+        localStorage.setItem('lda2_theme', isDark ? 'dark' : 'light');
+      } catch (e) {}
     }
 
-    if (localStorage.getItem('lda2_theme') === 'dark') {
-      document.body.classList.add('dark-theme');
-      document.getElementById('theme-icon').textContent = '☀️';
-    }
+    try {
+      if (localStorage.getItem('lda2_theme') === 'dark') {
+        document.body.classList.add('dark-theme');
+        const themeIcon = document.getElementById('theme-icon');
+        if (themeIcon) themeIcon.textContent = '☀️';
+      }
+    } catch (e) {}
 
     // ScrollSpy & Dynamic Breadcrumb
     window.addEventListener('scroll', () => {
-      const topbarHeight = document.getElementById('app-topbar').offsetHeight;
+      const topbar = document.getElementById('app-topbar');
+      const topbarHeight = topbar ? topbar.offsetHeight : 64;
       const scrollPos = window.scrollY + topbarHeight + 100;
       
       let currentSectionId = "";
@@ -20570,7 +22644,72 @@ tr:hover td { background-color: var(--slate-50); }
       }
     });
 
-    function handleCardSelection(qCard, optIdx, subId) {
+    // --- GERENCIAMENTO DE LOCALSTORAGE ---
+    function getStoredData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : { answers: {}, manual: {} };
+      } catch (e) {
+        console.warn('Erro ao ler localStorage:', e);
+        return { answers: {}, manual: {} };
+      }
+    }
+
+    function saveAnswerToStorage(cardId, subId, optIdx, isCorrect) {
+      try {
+        const data = getStoredData();
+        if (!data.answers) data.answers = {};
+        data.answers[cardId] = {
+          opt: parseInt(optIdx),
+          correct: isCorrect,
+          sub: subId,
+          ts: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.warn('Erro ao salvar resposta no localStorage:', e);
+      }
+    }
+
+    function removeSubtopicFromStorage(subId) {
+      try {
+        const data = getStoredData();
+        if (data.answers) {
+          for (const cid in data.answers) {
+            if (data.answers[cid].sub === subId) {
+              delete data.answers[cid];
+            }
+          }
+        }
+        if (data.manual) {
+          delete data.manual[subId];
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.warn('Erro ao remover subtópico do localStorage:', e);
+      }
+    }
+
+    function saveManualCheckToStorage(subId, isChecked) {
+      try {
+        const data = getStoredData();
+        if (!data.manual) data.manual = {};
+        data.manual[subId] = isChecked;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {}
+    }
+
+    function resetAllProgress() {
+      if (confirm("Deseja realmente zerar todo o progresso de questões e respostas gravadas neste navegador?")) {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch (e) {}
+        location.reload();
+      }
+    }
+
+    // --- RENDERIZAÇÃO E PROCESSAMENTO DE QUESTÕES ---
+    function handleCardSelection(qCard, optIdx, subId, shouldSave = true) {
       if (!qCard || qCard.dataset.answered === "true") return;
 
       qCard.dataset.answered = "true";
@@ -20579,7 +22718,6 @@ tr:hover td { background-color: var(--slate-50); }
       const correct = parseInt(qCard.dataset.correct);
       const options = qCard.querySelectorAll('.option-item');
       const exp = qCard.querySelector('.explanation');
-
       const isCorrect = (parseInt(optIdx) === correct);
 
       options.forEach((opt, idx) => {
@@ -20587,12 +22725,12 @@ tr:hover td { background-color: var(--slate-50); }
         if (idx === correct) {
           opt.classList.add('correct');
           if (!opt.querySelector('.opt-badge-correct')) {
-            opt.insertAdjacentHTML('beforeend', '<span class="opt-badge-correct">✔ GABARITO</span>');
+            opt.insertAdjacentHTML('beforeend', '<span class=\"opt-badge-correct\">✔ GABARITO</span>');
           }
         } else if (idx === parseInt(optIdx) && !isCorrect) {
           opt.classList.add('incorrect');
           if (!opt.querySelector('.opt-badge-incorrect')) {
-            opt.insertAdjacentHTML('beforeend', '<span class="opt-badge-incorrect">✖ SUA RESPOSTA</span>');
+            opt.insertAdjacentHTML('beforeend', '<span class=\"opt-badge-incorrect\">✖ SUA RESPOSTA</span>');
           }
         }
       });
@@ -20603,11 +22741,11 @@ tr:hover td { background-color: var(--slate-50); }
         if (isCorrect) {
           exp.classList.add('correct');
           exp.classList.remove('incorrect');
-          exp.innerHTML = '<strong>✅ Resposta Correta!</strong><br><br><strong>Comentário Didático do Professor & Fundamentação Normativa:</strong><br>' + just;
+          exp.innerHTML = '<strong>✅ Resposta Correta!</strong><br><br><strong>Comentário Didático do Professor &amp; Fundamentação Normativa:</strong><br>' + just;
         } else {
           exp.classList.add('incorrect');
           exp.classList.remove('correct');
-          exp.innerHTML = `<strong>❌ Resposta Incorreta.</strong> A alternativa correta é a letra <strong>${String.fromCharCode(65 + correct)}</strong>.<br><br><strong>Comentário Didático do Professor & Fundamentação Normativa:</strong><br>` + just;
+          exp.innerHTML = `<strong>❌ Resposta Incorreta.</strong> A alternativa correta é a letra <strong>${String.fromCharCode(65 + correct)}</strong>.<br><br><strong>Comentário Didático do Professor &amp; Fundamentação Normativa:</strong><br>` + just;
         }
       }
 
@@ -20618,90 +22756,13 @@ tr:hover td { background-color: var(--slate-50); }
 
       globalAnswered++;
       if (isCorrect) globalCorrect++; else globalIncorrect++;
-      
+
+      if (shouldSave && qCard.id) {
+        saveAnswerToStorage(qCard.id, resolvedSubId, optIdx, isCorrect);
+      }
+
       updateGlobalUI();
-    }
-
-    function updateGlobalUI() {
-      const tAns = document.getElementById('topbar-answered');
-      const tCor = document.getElementById('topbar-correct');
-      const tRate = document.getElementById('topbar-rate');
-      if (tAns) tAns.textContent = globalAnswered;
-      if (tCor) tCor.textContent = globalCorrect;
-      if (tRate) tRate.textContent = globalAnswered > 0 ? Math.round((globalCorrect / globalAnswered) * 100) + '%' : '0%';
-
-      const gAns = document.getElementById('global-answered');
-      const gCor = document.getElementById('global-correct');
-      const gInc = document.getElementById('global-incorrect');
-      const gRate = document.getElementById('global-rate');
-      if (gAns) gAns.textContent = globalAnswered;
-      if (gCor) gCor.textContent = globalCorrect;
-      if (gInc) gInc.textContent = globalIncorrect;
-      if (gRate) gRate.textContent = globalAnswered > 0 ? Math.round((globalCorrect / globalAnswered) * 100) + '%' : '0%';
-
-      const pct = Math.round((globalAnswered / 550) * 100);
-      const sBar = document.getElementById('sidebar-progress-bar');
-      const sPct = document.getElementById('sidebar-progress-percent');
-      const sTxt = document.getElementById('sidebar-progress-text');
-      const sAcertos = document.getElementById('sidebar-acertos-text');
-      if (sBar) sBar.style.width = pct + '%';
-      if (sPct) sPct.textContent = pct + '%';
-      if (sTxt) sTxt.textContent = `${globalAnswered} de 550 questões`;
-      if (sAcertos) sAcertos.textContent = `${globalCorrect} acertos`;
-
-      updateModuleProgress();
-    }
-
-    function updateModuleProgress() {
-      const counts = { 1: 0, 2: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
-      document.querySelectorAll('.question-card[data-answered="true"]').forEach(card => {
-        const sub = card.dataset.subtopic;
-        const mod = subtopicModuleMap[sub] || 1;
-        if (counts[mod] !== undefined) counts[mod]++;
-      });
-
-      const m1Pct = Math.round((counts[1] / 60) * 100);
-      const m2Pct = Math.round((counts[2] / 100) * 100);
-      const m5Pct = Math.round((counts[5] / 60) * 100);
-      const m6Pct = Math.round((counts[6] / 60) * 100);
-      const m7Pct = Math.round((counts[7] / 90) * 100);
-      const m8Pct = Math.round((counts[8] / 90) * 100);
-      const m9Pct = Math.round((counts[9] / 90) * 100);
-
-      const m1Text = document.getElementById('mod1-prog-text');
-      const m1Bar = document.getElementById('mod1-prog-bar');
-      if (m1Text) m1Text.textContent = `${counts[1]}/60 (${m1Pct}%)`;
-      if (m1Bar) m1Bar.style.width = m1Pct + '%';
-
-      const m2Text = document.getElementById('mod2-prog-text');
-      const m2Bar = document.getElementById('mod2-prog-bar');
-      if (m2Text) m2Text.textContent = `${counts[2]}/100 (${m2Pct}%)`;
-      if (m2Bar) m2Bar.style.width = m2Pct + '%';
-
-      const m5Text = document.getElementById('mod5-prog-text');
-      const m5Bar = document.getElementById('mod5-prog-bar');
-      if (m5Text) m5Text.textContent = `${counts[5]}/60 (${m5Pct}%)`;
-      if (m5Bar) m5Bar.style.width = m5Pct + '%';
-
-      const m6Text = document.getElementById('mod6-prog-text');
-      const m6Bar = document.getElementById('mod6-prog-bar');
-      if (m6Text) m6Text.textContent = `${counts[6]}/60 (${m6Pct}%)`;
-      if (m6Bar) m6Bar.style.width = m6Pct + '%';
-
-      const m7Text = document.getElementById('mod7-prog-text');
-      const m7Bar = document.getElementById('mod7-prog-bar');
-      if (m7Text) m7Text.textContent = `${counts[7]}/90 (${m7Pct}%)`;
-      if (m7Bar) m7Bar.style.width = m7Pct + '%';
-
-      const m8Text = document.getElementById('mod8-prog-text');
-      const m8Bar = document.getElementById('mod8-prog-bar');
-      if (m8Text) m8Text.textContent = `${counts[8]}/90 (${m8Pct}%)`;
-      if (m8Bar) m8Bar.style.width = m8Pct + '%';
-
-      const m9Text = document.getElementById('mod9-prog-text');
-      const m9Bar = document.getElementById('mod9-prog-bar');
-      if (m9Text) m9Text.textContent = `${counts[9]}/90 (${m9Pct}%)`;
-      if (m9Bar) m9Bar.style.width = m9Pct + '%';
+      updateChecklistItem(resolvedSubId);
     }
 
     function selectSubtopicOption(subId, qIdx, optIdx, elem) {
@@ -20724,7 +22785,7 @@ tr:hover td { background-color: var(--slate-50); }
       }
 
       if (qCard) {
-        handleCardSelection(qCard, optIdx, subId);
+        handleCardSelection(qCard, optIdx, subId, true);
       }
     }
 
@@ -20733,13 +22794,159 @@ tr:hover td { background-color: var(--slate-50); }
       if (!opt) return;
       const qCard = opt.closest('.question-card');
       if (!qCard || qCard.dataset.answered === 'true') return;
-      
+
       const options = Array.from(qCard.querySelectorAll('.option-item'));
       const optIdx = options.indexOf(opt);
       if (optIdx !== -1) {
-        handleCardSelection(qCard, optIdx, qCard.dataset.subtopic);
+        handleCardSelection(qCard, optIdx, qCard.dataset.subtopic, true);
       }
     });
+
+    // --- ATUALIZAÇÃO DE INTERFACE, FORÇA E RESTANTE ---
+    function updateGlobalUI() {
+      const totalQuestions = 550;
+      const remainingQuestions = Math.max(0, totalQuestions - globalAnswered);
+      const completionPercent = Math.round((globalAnswered / totalQuestions) * 100);
+      const remainingPercent = Math.max(0, 100 - completionPercent);
+      const accuracyRate = globalAnswered > 0 ? Math.round((globalCorrect / globalAnswered) * 100) : 0;
+      
+      // Cálculo Oficial da Força do Progresso:
+      // Combina Cobertura de Questões (%) com a Taxa de Acertos Real (%)
+      const progressForce = Math.round((completionPercent * accuracyRate) / 100);
+
+      // Classificação do Nível de Força
+      let forceLevelText = "🛡️ Nível 1: Inicial";
+      let forceFullLabel = `${progressForce}% • 🛡️ Fase Inicial de Estudo`;
+      let activeStepIndex = 1;
+      
+      if (progressForce > 80) {
+        forceLevelText = "🏆 Nível 5: Força de Elite";
+        forceFullLabel = `${progressForce}% • 🏆 Força de Elite (Nível Aluno Aprovado!)`;
+        activeStepIndex = 5;
+      } else if (progressForce > 60) {
+        forceLevelText = "🎖️ Nível 4: Avançado";
+        forceFullLabel = `${progressForce}% • 🎖️ Desempenho Tático Avançado`;
+        activeStepIndex = 4;
+      } else if (progressForce > 40) {
+        forceLevelText = "🎯 Nível 3: Consistente";
+        forceFullLabel = `${progressForce}% • 🎯 Domínio Doutrinário Consistente`;
+        activeStepIndex = 3;
+      } else if (progressForce > 20) {
+        forceLevelText = "⚡ Nível 2: Construção";
+        forceFullLabel = `${progressForce}% • ⚡ Base Operacional em Construção`;
+        activeStepIndex = 2;
+      }
+
+      // Topbar updates
+      const tAns = document.getElementById('topbar-answered');
+      const tCor = document.getElementById('topbar-correct');
+      const tRate = document.getElementById('topbar-rate');
+      const tRem = document.getElementById('topbar-remaining-pct');
+      const tForce = document.getElementById('topbar-force');
+      if (tAns) tAns.textContent = globalAnswered;
+      if (tCor) tCor.textContent = globalCorrect;
+      if (tRate) tRate.textContent = accuracyRate + '%';
+      if (tRem) tRem.textContent = remainingPercent + '%';
+      if (tForce) tForce.textContent = progressForce + '%';
+
+      // Dashboard Metric Cards
+      const gAns = document.getElementById('global-answered');
+      const gAnsPct = document.getElementById('global-answered-pct');
+      const gCor = document.getElementById('global-correct');
+      const gCorPct = document.getElementById('global-correct-pct');
+      const gInc = document.getElementById('global-incorrect');
+      const gIncPct = document.getElementById('global-incorrect-pct');
+      const gRate = document.getElementById('global-rate');
+      const gRemPct = document.getElementById('global-remaining-pct');
+      const gRemCount = document.getElementById('global-remaining-count');
+      const gForce = document.getElementById('global-force');
+      const gForceLvl = document.getElementById('global-force-level');
+
+      if (gAns) gAns.textContent = globalAnswered;
+      if (gAnsPct) gAnsPct.textContent = `${completionPercent}% Concluído`;
+      if (gCor) gCor.textContent = globalCorrect;
+      if (gCorPct) gCorPct.textContent = `${Math.round((globalCorrect / totalQuestions) * 100)}% do total`;
+      if (gInc) gInc.textContent = globalIncorrect;
+      if (gIncPct) gIncPct.textContent = `${Math.round((globalIncorrect / totalQuestions) * 100)}% do total`;
+      if (gRate) gRate.textContent = accuracyRate + '%';
+      if (gRemPct) gRemPct.textContent = remainingPercent + '%';
+      if (gRemCount) gRemCount.textContent = `${remainingQuestions} questões restantes`;
+      if (gForce) gForce.textContent = progressForce + '%';
+      if (gForceLvl) gForceLvl.textContent = forceLevelText;
+
+      // Force Bar and Step Highlight
+      const forceFill = document.getElementById('force-bar-fill');
+      const forceTitle = document.getElementById('force-level-title');
+      if (forceFill) forceFill.style.width = progressForce + '%';
+      if (forceTitle) forceTitle.textContent = forceFullLabel;
+
+      for (let i = 1; i <= 5; i++) {
+        const stepEl = document.getElementById(`f-step-${i}`);
+        if (stepEl) {
+          if (i === activeStepIndex) {
+            stepEl.classList.add('active');
+          } else {
+            stepEl.classList.remove('active');
+          }
+        }
+      }
+
+      // Sidebar Footer
+      const sBar = document.getElementById('sidebar-progress-bar');
+      const sPct = document.getElementById('sidebar-progress-percent');
+      const sTxt = document.getElementById('sidebar-progress-text');
+      const sAcertos = document.getElementById('sidebar-acertos-text');
+      const sRemPct = document.getElementById('sidebar-remaining-pct');
+      const sRemCount = document.getElementById('sidebar-remaining-count');
+      const sForce = document.getElementById('sidebar-force-pct');
+
+      if (sBar) sBar.style.width = completionPercent + '%';
+      if (sPct) sPct.textContent = completionPercent + '%';
+      if (sTxt) sTxt.textContent = `${globalAnswered} de 550 questões`;
+      if (sAcertos) sAcertos.textContent = `${globalCorrect} acertos`;
+      if (sRemPct) sRemPct.textContent = remainingPercent + '%';
+      if (sRemCount) sRemCount.textContent = remainingQuestions;
+      if (sForce) sForce.textContent = progressForce + '%';
+
+      updateModuleProgress();
+      updateChecklistCounters();
+    }
+
+    function updateModuleProgress() {
+      const counts = { 1: 0, 2: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+      document.querySelectorAll('.question-card[data-answered="true"]').forEach(card => {
+        const sub = card.dataset.subtopic;
+        const mod = subtopicModuleMap[sub] || 1;
+        if (counts[mod] !== undefined) counts[mod]++;
+      });
+
+      const moduleSpecs = [
+        { id: 1, total: 60 },
+        { id: 2, total: 100 },
+        { id: 5, total: 60 },
+        { id: 6, total: 60 },
+        { id: 7, total: 90 },
+        { id: 8, total: 90 },
+        { id: 9, total: 90 }
+      ];
+
+      moduleSpecs.forEach(m => {
+        const done = counts[m.id];
+        const pct = Math.round((done / m.total) * 100);
+        
+        // Progress cards in dashboard
+        const tEl = document.getElementById(`mod${m.id}-prog-text`);
+        const bEl = document.getElementById(`mod${m.id}-prog-bar`);
+        if (tEl) tEl.textContent = `${done}/${m.total} (${pct}%)`;
+        if (bEl) bEl.style.width = pct + '%';
+
+        // Checklist module boxes
+        const chkStat = document.getElementById(`chk-mod-${m.id}-stat`);
+        const chkPct = document.getElementById(`chk-mod-${m.id}-pct`);
+        if (chkStat) chkStat.textContent = `${done}/${m.total}`;
+        if (chkPct) chkPct.textContent = `${pct}%`;
+      });
+    }
 
     function updateSubtopicScore(subId) {
       const quizBox = document.getElementById(`quiz-sec-${subId}`);
@@ -20760,13 +22967,17 @@ tr:hover td { background-color: var(--slate-50); }
 
       const scoreDisplay = quizBox.querySelector('.score-display') || document.getElementById(`score-${subId}`);
       if (scoreDisplay) {
-        scoreDisplay.style.display = 'block';
-        scoreDisplay.innerHTML = `Desempenho no Subtópico: <strong>${correctCount} de ${answeredCount}</strong> respondidas (${cards.length} no total) • Aproveitamento: <strong>${Math.round((correctCount / answeredCount) * 100)}%</strong>`;
+        if (answeredCount > 0) {
+          scoreDisplay.style.display = 'block';
+          scoreDisplay.innerHTML = `Desempenho no Subtópico: <strong>${correctCount} de ${answeredCount}</strong> respondidas (${cards.length} no total) • Aproveitamento: <strong>${Math.round((correctCount / answeredCount) * 100)}%</strong>`;
+        } else {
+          scoreDisplay.style.display = 'none';
+        }
       }
 
       const resetBtn = quizBox.querySelector('.btn-secondary') || document.getElementById(`btn-reset-${subId}`);
-      if (resetBtn && answeredCount === cards.length) {
-        resetBtn.style.display = 'inline-flex';
+      if (resetBtn) {
+        resetBtn.style.display = (answeredCount === cards.length) ? 'inline-flex' : 'none';
       }
     }
 
@@ -20777,17 +22988,17 @@ tr:hover td { background-color: var(--slate-50); }
       const cards = quizBox.querySelectorAll('.question-card');
       cards.forEach(card => {
         if (card.dataset.answered === "true") {
-           globalAnswered--;
-           if (parseInt(card.dataset.selected) === parseInt(card.dataset.correct)) {
-               globalCorrect--;
-           } else {
-               globalIncorrect--;
-           }
+          globalAnswered--;
+          if (parseInt(card.dataset.selected) === parseInt(card.dataset.correct)) {
+            globalCorrect--;
+          } else {
+            globalIncorrect--;
+          }
         }
-        
+
         delete card.dataset.answered;
         delete card.dataset.selected;
-        
+
         const options = card.querySelectorAll('.option-item');
         options.forEach(opt => {
           opt.className = 'option-item';
@@ -20804,26 +23015,197 @@ tr:hover td { background-color: var(--slate-50); }
         }
       });
 
-      updateGlobalUI();
+      // Remove from localStorage
+      removeSubtopicFromStorage(subId);
 
-      const scoreDisplay = quizBox.querySelector('.score-display');
+      const scoreDisplay = quizBox.querySelector('.score-display') || document.getElementById(`score-${subId}`);
       if (scoreDisplay) scoreDisplay.style.display = 'none';
 
-      const resetBtn = quizBox.querySelector('.btn-secondary');
+      const resetBtn = quizBox.querySelector('.btn-secondary') || document.getElementById(`btn-reset-${subId}`);
       if (resetBtn) resetBtn.style.display = 'none';
+
+      updateGlobalUI();
+      updateChecklistItem(subId);
+    }
+
+    // --- CHECKLIST INTERATIVO DE SUBTÓPICOS ---
+    function updateChecklistItem(subId) {
+      const row = document.getElementById(`chk-row-${subId}`);
+      if (!row) return;
+
+      const quizBox = document.getElementById(`quiz-sec-${subId}`);
+      const cards = quizBox ? quizBox.querySelectorAll('.question-card') : [];
+      let answered = 0;
+      let correct = 0;
+
+      cards.forEach(c => {
+        if (c.dataset.answered === "true") {
+          answered++;
+          if (parseInt(c.dataset.selected) === parseInt(c.dataset.correct)) {
+            correct++;
+          }
+        }
+      });
+
+      const total = cards.length || 10;
+      const pct = Math.round((answered / total) * 100);
+      const acc = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+
+      const bar = document.getElementById(`chk-bar-${subId}`);
+      const txt = document.getElementById(`chk-txt-${subId}`);
+      const accSpan = document.getElementById(`chk-acc-${subId}`);
+      const badge = document.getElementById(`chk-badge-${subId}`);
+      const chkInput = document.getElementById(`chk-check-${subId}`);
+
+      if (bar) bar.style.width = pct + '%';
+      if (txt) txt.textContent = `${answered}/${total} Q`;
+
+      if (accSpan) {
+        if (answered > 0) {
+          accSpan.style.display = 'inline';
+          accSpan.textContent = `• ${correct} acertos (${acc}%)`;
+        } else {
+          accSpan.style.display = 'none';
+        }
+      }
+
+      // Check manual state
+      const data = getStoredData();
+      const isManual = data.manual && data.manual[subId];
+
+      if (answered === total || isManual) {
+        row.dataset.status = "done";
+        row.classList.add('is-done');
+        if (badge) {
+          badge.className = 'chk-status-badge done';
+          badge.textContent = 'Concluído ✔';
+        }
+        if (chkInput) chkInput.checked = true;
+      } else if (answered > 0) {
+        row.dataset.status = "progress";
+        row.classList.remove('is-done');
+        if (badge) {
+          badge.className = 'chk-status-badge progress';
+          badge.textContent = `Em Andamento (${answered}/${total})`;
+        }
+        if (chkInput) chkInput.checked = false;
+      } else {
+        row.dataset.status = "pending";
+        row.classList.remove('is-done');
+        if (badge) {
+          badge.className = 'chk-status-badge pending';
+          badge.textContent = 'Pendente';
+        }
+        if (chkInput) chkInput.checked = false;
+      }
+    }
+
+    function toggleManualSubtopicCheck(subId, isChecked) {
+      saveManualCheckToStorage(subId, isChecked);
+      updateChecklistItem(subId);
+      updateChecklistCounters();
+    }
+
+    function toggleChkModule(elem) {
+      const box = elem.closest('.chk-module-box');
+      if (box) box.classList.toggle('collapsed');
+    }
+
+    function filterChecklist(filterType, btn) {
+      document.querySelectorAll('.chk-filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      document.querySelectorAll('.chk-item-row').forEach(row => {
+        const status = row.dataset.status;
+        if (filterType === 'all') {
+          row.style.display = '';
+        } else if (filterType === 'done' && status === 'done') {
+          row.style.display = '';
+        } else if (filterType === 'progress' && status === 'progress') {
+          row.style.display = '';
+        } else if (filterType === 'pending' && status === 'pending') {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function updateChecklistCounters() {
+      let done = 0;
+      let progress = 0;
+      let pending = 0;
+
+      document.querySelectorAll('.chk-item-row').forEach(row => {
+        const s = row.dataset.status;
+        if (s === 'done') done++;
+        else if (s === 'progress') progress++;
+        else pending++;
+      });
+
+      const cDone = document.getElementById('chk-count-done');
+      const cProg = document.getElementById('chk-count-progress');
+      const cPend = document.getElementById('chk-count-pending');
+      if (cDone) cDone.textContent = done;
+      if (cProg) cProg.textContent = progress;
+      if (cPend) cPend.textContent = pending;
+    }
+
+    // --- RESTAURAÇÃO DE RESPOSTAS DO LOCALSTORAGE ---
+    function restoreSavedState() {
+      const data = getStoredData();
+      if (!data.answers) return;
+
+      const answeredCards = Object.keys(data.answers);
+      if (answeredCards.length === 0) return;
+
+      answeredCards.forEach(cardId => {
+        const qCard = document.getElementById(cardId);
+        if (qCard) {
+          const item = data.answers[cardId];
+          handleCardSelection(qCard, item.opt, item.sub, false);
+        }
+      });
+
+      // Restore all checklist items
+      for (const subId in subtopicTitles) {
+        const cleanSub = subId.replace('sec-', '');
+        updateChecklistItem(cleanSub);
+      }
     }
 
     function downloadHTML() {
       const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-      const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
-      const a = document.createElement("a");
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = "LDA2_Livro_Digital_Aluno_Aprovado_Sistema_LMS_550Q.html";
+      a.download = 'LDA2_Livro_Digital_Aluno_Aprovado_Sistema_LMS_550Q.html';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(a.href);
     }
+
+    // Initialize system
+    document.addEventListener('DOMContentLoaded', () => {
+      restoreSavedState();
+      updateGlobalUI();
+      for (const subId in subtopicTitles) {
+        const cleanSub = subId.replace('sec-', '');
+        updateChecklistItem(cleanSub);
+      }
+    });
+
+    // Fallback immediate call if DOM already loaded
+    setTimeout(() => {
+      restoreSavedState();
+      updateGlobalUI();
+      for (const subId in subtopicTitles) {
+        const cleanSub = subId.replace('sec-', '');
+        updateChecklistItem(cleanSub);
+      }
+    }, 200);
+
   </script>
 
 </body>
