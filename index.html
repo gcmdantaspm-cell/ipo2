@@ -22397,23 +22397,25 @@ tr:hover td { background-color: var(--slate-50); }
   <script>
 
     // ==========================================================================
-    // SISTEMA LMS COM PERSISTÊNCIA LOCALSTORAGE, FORÇA DO PROGRESSO & CHECKLIST
+    // SISTEMA LMS COM PERSISTÊNCIA, CÁLCULO SINCRONIZADO DE FORÇA E CHECKLIST
     // ==========================================================================
     const STORAGE_KEY = 'lda2_lms_550q_v1';
-    
+    const TOTAL_QUESTIONS = 550;
+    const TOTAL_SUBTOPICS = 55;
+
     let globalAnswered = 0;
     let globalCorrect = 0;
     let globalIncorrect = 0;
 
-    const moduleTotals = {
-      1: { total: 60 },
-      2: { total: 100 },
-      5: { total: 60 },
-      6: { total: 60 },
-      7: { total: 90 },
-      8: { total: 90 },
-      9: { total: 90 }
-    };
+    const moduleDefinitions = [
+      { id: 1, total: 60, subCount: 6 },
+      { id: 2, total: 100, subCount: 10 },
+      { id: 5, total: 60, subCount: 6 },
+      { id: 6, total: 60, subCount: 6 },
+      { id: 7, total: 90, subCount: 9 },
+      { id: 8, total: 90, subCount: 9 },
+      { id: 9, total: 90, subCount: 9 }
+    ];
 
     const subtopicModuleMap = {
       "1": 1, "resumo-cap1": 1, "2": 1, "2-1": 1, "2-2": 1, "2-3": 1, "2-4": 1, "resumo-cap2": 1,
@@ -22511,140 +22513,15 @@ tr:hover td { background-color: var(--slate-50); }
       "sec-resumo-mod9-u3": "🎓 Resumo: Módulo IX — Unidade 03"
     };
 
-    // --- FUNÇÕES DE NAVEGAÇÃO, SIDEBAR E TEMA ---
-    function toggleSidebar() {
-      const sidebar = document.getElementById('app-sidebar');
-      const backdrop = document.getElementById('sidebar-backdrop');
-      const isMobile = window.innerWidth <= 1024;
-      
-      if (isMobile) {
-        sidebar.classList.toggle('open');
-        backdrop.classList.toggle('show');
-      } else {
-        if (sidebar.style.transform === 'translateX(-100%)') {
-          sidebar.style.transform = 'translateX(0)';
-          document.querySelector('.app-main').style.marginLeft = 'var(--sidebar-width)';
-        } else {
-          sidebar.style.transform = 'translateX(-100%)';
-          document.querySelector('.app-main').style.marginLeft = '0';
-        }
-      }
+    // --- FORMATAÇÃO DE PORCENTAGEM DINÂMICA (NUNCA TRAVA EM ZERO OU CEM) ---
+    function formatDynamicPct(val) {
+      if (val <= 0) return "0%";
+      if (val >= 100) return "100%";
+      if (val < 10 || val > 90) return val.toFixed(1) + "%";
+      return Math.round(val) + "%";
     }
 
-    function handleNavClick(targetHash) {
-      if (window.innerWidth <= 1024) {
-        const sb = document.getElementById('app-sidebar');
-        const bd = document.getElementById('sidebar-backdrop');
-        if (sb) sb.classList.remove('open');
-        if (bd) bd.classList.remove('show');
-      }
-      
-      const targetEl = document.querySelector(targetHash);
-      if (targetEl) {
-        const topbar = document.getElementById('app-topbar');
-        const topbarHeight = topbar ? topbar.offsetHeight : 64;
-        const y = targetEl.getBoundingClientRect().top + window.scrollY - topbarHeight - 20;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-      }
-    }
-
-    function toggleModuleBlock(elem) {
-      const block = elem.closest('.nav-module-block');
-      if (block) {
-        block.classList.toggle('open');
-      }
-    }
-
-    function expandAllModules() {
-      document.querySelectorAll('.nav-module-block').forEach(b => b.classList.add('open'));
-    }
-
-    function collapseAllModules() {
-      document.querySelectorAll('.nav-module-block').forEach(b => b.classList.remove('open'));
-    }
-
-    function filterSidebar(query) {
-      const q = query.trim().toLowerCase();
-      const clearBtn = document.getElementById('search-clear-btn');
-      if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
-
-      document.querySelectorAll('.nav-module-block').forEach(block => {
-        let hasMatch = false;
-        block.querySelectorAll('.sidebar-nav-item').forEach(item => {
-          const txt = item.textContent.toLowerCase();
-          if (!q || txt.includes(q)) {
-            item.parentElement.style.display = '';
-            hasMatch = true;
-          } else {
-            item.parentElement.style.display = 'none';
-          }
-        });
-        
-        if (hasMatch) {
-          block.style.display = '';
-          if (q) block.classList.add('open');
-        } else {
-          block.style.display = q ? 'none' : '';
-        }
-      });
-    }
-
-    function clearSidebarSearch() {
-      const inp = document.getElementById('sidebar-search-input');
-      if (inp) {
-        inp.value = '';
-        filterSidebar('');
-        inp.focus();
-      }
-    }
-
-    function toggleTheme() {
-      document.body.classList.toggle('dark-theme');
-      const isDark = document.body.classList.contains('dark-theme');
-      const themeIcon = document.getElementById('theme-icon');
-      if (themeIcon) themeIcon.textContent = isDark ? '☀️' : '🌙';
-      try {
-        localStorage.setItem('lda2_theme', isDark ? 'dark' : 'light');
-      } catch (e) {}
-    }
-
-    try {
-      if (localStorage.getItem('lda2_theme') === 'dark') {
-        document.body.classList.add('dark-theme');
-        const themeIcon = document.getElementById('theme-icon');
-        if (themeIcon) themeIcon.textContent = '☀️';
-      }
-    } catch (e) {}
-
-    // ScrollSpy & Dynamic Breadcrumb
-    window.addEventListener('scroll', () => {
-      const topbar = document.getElementById('app-topbar');
-      const topbarHeight = topbar ? topbar.offsetHeight : 64;
-      const scrollPos = window.scrollY + topbarHeight + 100;
-      
-      let currentSectionId = "";
-      document.querySelectorAll('.chapter-wrapper').forEach(sec => {
-        if (sec.offsetTop <= scrollPos) {
-          currentSectionId = sec.id;
-        }
-      });
-
-      if (currentSectionId) {
-        const title = subtopicTitles[currentSectionId] || currentSectionId;
-        const bc = document.getElementById('breadcrumb-current');
-        if (bc) bc.textContent = title;
-
-        document.querySelectorAll('.sidebar-nav-item').forEach(item => {
-          if (item.getAttribute('href') === `#${currentSectionId}`) {
-            item.classList.add('active');
-          } else {
-            item.classList.remove('active');
-          }
-        });
-      }
-    });
-
-    // --- GERENCIAMENTO DE LOCALSTORAGE ---
+    // --- FUNÇÕES DE LOCALSTORAGE ---
     function getStoredData() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -22696,11 +22573,13 @@ tr:hover td { background-color: var(--slate-50); }
         if (!data.manual) data.manual = {};
         data.manual[subId] = isChecked;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Erro ao salvar check manual:', e);
+      }
     }
 
     function resetAllProgress() {
-      if (confirm("Deseja realmente zerar todo o progresso de questões e respostas gravadas neste navegador?")) {
+      if (confirm("Deseja realmente zerar todo o progresso de questões e o checklist gravados neste navegador?")) {
         try {
           localStorage.removeItem(STORAGE_KEY);
         } catch (e) {}
@@ -22708,7 +22587,7 @@ tr:hover td { background-color: var(--slate-50); }
       }
     }
 
-    // --- RENDERIZAÇÃO E PROCESSAMENTO DE QUESTÕES ---
+    // --- SELEÇÃO E PROCESSAMENTO DE QUESTÕES ---
     function handleCardSelection(qCard, optIdx, subId, shouldSave = true) {
       if (!qCard || qCard.dataset.answered === "true") return;
 
@@ -22761,8 +22640,9 @@ tr:hover td { background-color: var(--slate-50); }
         saveAnswerToStorage(qCard.id, resolvedSubId, optIdx, isCorrect);
       }
 
-      updateGlobalUI();
       updateChecklistItem(resolvedSubId);
+      updateChecklistCounters();
+      updateGlobalUI();
     }
 
     function selectSubtopicOption(subId, qIdx, optIdx, elem) {
@@ -22802,42 +22682,80 @@ tr:hover td { background-color: var(--slate-50); }
       }
     });
 
-    // --- ATUALIZAÇÃO DE INTERFACE, FORÇA E RESTANTE ---
+    // --- SINCRONIZAÇÃO COMPLETA DE MÉTRICAS, FORÇA E FALTA ---
     function updateGlobalUI() {
-      const totalQuestions = 550;
-      const remainingQuestions = Math.max(0, totalQuestions - globalAnswered);
-      const completionPercent = Math.round((globalAnswered / totalQuestions) * 100);
-      const remainingPercent = Math.max(0, 100 - completionPercent);
-      const accuracyRate = globalAnswered > 0 ? Math.round((globalCorrect / globalAnswered) * 100) : 0;
-      
-      // Cálculo Oficial da Força do Progresso:
-      // Combina Cobertura de Questões (%) com a Taxa de Acertos Real (%)
-      const progressForce = Math.round((completionPercent * accuracyRate) / 100);
+      // 1. Contabilização de Subtópicos Concluídos no Checklist
+      const data = getStoredData();
+      let completedSubtopicsCount = 0;
 
-      // Classificação do Nível de Força
+      // Iterar por todos os 55 subtópicos
+      document.querySelectorAll('.chk-item-row').forEach(row => {
+        const sub = row.dataset.sub;
+        const quizBox = document.getElementById(`quiz-sec-${sub}`);
+        const cards = quizBox ? quizBox.querySelectorAll('.question-card') : [];
+        let ansInSub = 0;
+        cards.forEach(c => { if (c.dataset.answered === "true") ansInSub++; });
+        
+        const isManual = data.manual && data.manual[sub];
+        if (ansInSub === 10 || isManual) {
+          completedSubtopicsCount++;
+        }
+      });
+
+      // 2. Coberturas
+      const questionsCompletionPct = (globalAnswered / TOTAL_QUESTIONS) * 100;
+      const topicsCompletionPct = (completedSubtopicsCount / TOTAL_SUBTOPICS) * 100;
+
+      // O avanço global integra as questões respondidas com os tópicos do checklist
+      const overallCompletion = Math.max(topicsCompletionPct, questionsCompletionPct);
+      const remainingPct = Math.max(0, 100 - overallCompletion);
+
+      const remainingQuestions = Math.max(0, TOTAL_QUESTIONS - globalAnswered);
+      const remainingTopics = Math.max(0, TOTAL_SUBTOPICS - completedSubtopicsCount);
+
+      // 3. Aproveitamento / Precisão
+      const accuracyRate = globalAnswered > 0 ? (globalCorrect / globalAnswered) * 100 : 0;
+
+      // 4. CÁLCULO DA FORÇA DO PROGRESSO (Power Index)
+      // Combina o progresso alcançado com a precisão dos acertos nas questões:
+      let progressForce = 0;
+      if (globalAnswered > 0) {
+        progressForce = (overallCompletion * (accuracyRate / 100));
+      } else {
+        // Se o estudante marcou tópicos no checklist sem fazer questões ainda:
+        progressForce = topicsCompletionPct;
+      }
+
+      // Strings formatadas
+      const completionStr = formatDynamicPct(overallCompletion);
+      const remainingPctStr = formatDynamicPct(remainingPct);
+      const forceStr = formatDynamicPct(progressForce);
+      const accuracyStr = globalAnswered > 0 ? Math.round(accuracyRate) + '%' : '0%';
+
+      // 5. Nível de Força Tática
       let forceLevelText = "🛡️ Nível 1: Inicial";
-      let forceFullLabel = `${progressForce}% • 🛡️ Fase Inicial de Estudo`;
+      let forceFullLabel = `${forceStr} • 🛡️ Fase Inicial de Estudo`;
       let activeStepIndex = 1;
-      
-      if (progressForce > 80) {
+
+      if (progressForce >= 81) {
         forceLevelText = "🏆 Nível 5: Força de Elite";
-        forceFullLabel = `${progressForce}% • 🏆 Força de Elite (Nível Aluno Aprovado!)`;
+        forceFullLabel = `${forceStr} • 🏆 Força de Elite (Nível Aluno Aprovado!)`;
         activeStepIndex = 5;
-      } else if (progressForce > 60) {
+      } else if (progressForce >= 61) {
         forceLevelText = "🎖️ Nível 4: Avançado";
-        forceFullLabel = `${progressForce}% • 🎖️ Desempenho Tático Avançado`;
+        forceFullLabel = `${forceStr} • 🎖️ Desempenho Tático Avançado`;
         activeStepIndex = 4;
-      } else if (progressForce > 40) {
+      } else if (progressForce >= 41) {
         forceLevelText = "🎯 Nível 3: Consistente";
-        forceFullLabel = `${progressForce}% • 🎯 Domínio Doutrinário Consistente`;
+        forceFullLabel = `${forceStr} • 🎯 Domínio Doutrinário Consistente`;
         activeStepIndex = 3;
-      } else if (progressForce > 20) {
+      } else if (progressForce >= 21) {
         forceLevelText = "⚡ Nível 2: Construção";
-        forceFullLabel = `${progressForce}% • ⚡ Base Operacional em Construção`;
+        forceFullLabel = `${forceStr} • ⚡ Base Operacional em Construção`;
         activeStepIndex = 2;
       }
 
-      // Topbar updates
+      // --- ATUALIZAR TOPBAR ---
       const tAns = document.getElementById('topbar-answered');
       const tCor = document.getElementById('topbar-correct');
       const tRate = document.getElementById('topbar-rate');
@@ -22845,11 +22763,11 @@ tr:hover td { background-color: var(--slate-50); }
       const tForce = document.getElementById('topbar-force');
       if (tAns) tAns.textContent = globalAnswered;
       if (tCor) tCor.textContent = globalCorrect;
-      if (tRate) tRate.textContent = accuracyRate + '%';
-      if (tRem) tRem.textContent = remainingPercent + '%';
-      if (tForce) tForce.textContent = progressForce + '%';
+      if (tRate) tRate.textContent = accuracyStr;
+      if (tRem) tRem.textContent = remainingPctStr;
+      if (tForce) tForce.textContent = forceStr;
 
-      // Dashboard Metric Cards
+      // --- ATUALIZAR DASHBOARD METRICS ---
       const gAns = document.getElementById('global-answered');
       const gAnsPct = document.getElementById('global-answered-pct');
       const gCor = document.getElementById('global-correct');
@@ -22863,21 +22781,21 @@ tr:hover td { background-color: var(--slate-50); }
       const gForceLvl = document.getElementById('global-force-level');
 
       if (gAns) gAns.textContent = globalAnswered;
-      if (gAnsPct) gAnsPct.textContent = `${completionPercent}% Concluído`;
+      if (gAnsPct) gAnsPct.textContent = `${completionStr} Concluído`;
       if (gCor) gCor.textContent = globalCorrect;
-      if (gCorPct) gCorPct.textContent = `${Math.round((globalCorrect / totalQuestions) * 100)}% do total`;
+      if (gCorPct) gCorPct.textContent = `${Math.round((globalCorrect / TOTAL_QUESTIONS) * 100)}% do total`;
       if (gInc) gInc.textContent = globalIncorrect;
-      if (gIncPct) gIncPct.textContent = `${Math.round((globalIncorrect / totalQuestions) * 100)}% do total`;
-      if (gRate) gRate.textContent = accuracyRate + '%';
-      if (gRemPct) gRemPct.textContent = remainingPercent + '%';
-      if (gRemCount) gRemCount.textContent = `${remainingQuestions} questões restantes`;
-      if (gForce) gForce.textContent = progressForce + '%';
+      if (gIncPct) gIncPct.textContent = `${Math.round((globalIncorrect / TOTAL_QUESTIONS) * 100)}% do total`;
+      if (gRate) gRate.textContent = accuracyStr;
+      if (gRemPct) gRemPct.textContent = remainingPctStr;
+      if (gRemCount) gRemCount.textContent = `${remainingQuestions} questões • ${remainingTopics} tópicos restantes`;
+      if (gForce) gForce.textContent = forceStr;
       if (gForceLvl) gForceLvl.textContent = forceLevelText;
 
-      // Force Bar and Step Highlight
+      // --- ATUALIZAR BARRA DE FORÇA E ETAPAS ---
       const forceFill = document.getElementById('force-bar-fill');
       const forceTitle = document.getElementById('force-level-title');
-      if (forceFill) forceFill.style.width = progressForce + '%';
+      if (forceFill) forceFill.style.width = Math.min(100, Math.max(progressForce, 0)) + '%';
       if (forceTitle) forceTitle.textContent = forceFullLabel;
 
       for (let i = 1; i <= 5; i++) {
@@ -22891,7 +22809,7 @@ tr:hover td { background-color: var(--slate-50); }
         }
       }
 
-      // Sidebar Footer
+      // --- ATUALIZAR SIDEBAR FOOTER ---
       const sBar = document.getElementById('sidebar-progress-bar');
       const sPct = document.getElementById('sidebar-progress-percent');
       const sTxt = document.getElementById('sidebar-progress-text');
@@ -22900,51 +22818,58 @@ tr:hover td { background-color: var(--slate-50); }
       const sRemCount = document.getElementById('sidebar-remaining-count');
       const sForce = document.getElementById('sidebar-force-pct');
 
-      if (sBar) sBar.style.width = completionPercent + '%';
-      if (sPct) sPct.textContent = completionPercent + '%';
-      if (sTxt) sTxt.textContent = `${globalAnswered} de 550 questões`;
+      if (sBar) sBar.style.width = Math.min(100, Math.max(overallCompletion, 0)) + '%';
+      if (sPct) sPct.textContent = completionStr;
+      if (sTxt) sTxt.textContent = `${globalAnswered} de 550 questões (${completedSubtopicsCount}/55 tópicos)`;
       if (sAcertos) sAcertos.textContent = `${globalCorrect} acertos`;
-      if (sRemPct) sRemPct.textContent = remainingPercent + '%';
+      if (sRemPct) sRemPct.textContent = remainingPctStr;
       if (sRemCount) sRemCount.textContent = remainingQuestions;
-      if (sForce) sForce.textContent = progressForce + '%';
+      if (sForce) sForce.textContent = forceStr;
 
       updateModuleProgress();
-      updateChecklistCounters();
     }
 
     function updateModuleProgress() {
-      const counts = { 1: 0, 2: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
-      document.querySelectorAll('.question-card[data-answered="true"]').forEach(card => {
-        const sub = card.dataset.subtopic;
-        const mod = subtopicModuleMap[sub] || 1;
-        if (counts[mod] !== undefined) counts[mod]++;
-      });
+      const data = getStoredData();
 
-      const moduleSpecs = [
-        { id: 1, total: 60 },
-        { id: 2, total: 100 },
-        { id: 5, total: 60 },
-        { id: 6, total: 60 },
-        { id: 7, total: 90 },
-        { id: 8, total: 90 },
-        { id: 9, total: 90 }
-      ];
+      moduleDefinitions.forEach(m => {
+        let qDoneInModule = 0;
+        let tDoneInModule = 0;
 
-      moduleSpecs.forEach(m => {
-        const done = counts[m.id];
-        const pct = Math.round((done / m.total) * 100);
-        
-        // Progress cards in dashboard
+        // Iterar pelos subtópicos deste módulo
+        document.querySelectorAll(`.chk-module-box[data-module="${m.id}"] .chk-item-row`).forEach(row => {
+          const sub = row.dataset.sub;
+          const quizBox = document.getElementById(`quiz-sec-${sub}`);
+          const cards = quizBox ? quizBox.querySelectorAll('.question-card') : [];
+          let ansInSub = 0;
+          cards.forEach(c => {
+            if (c.dataset.answered === "true") {
+              ansInSub++;
+              qDoneInModule++;
+            }
+          });
+
+          const isManual = data.manual && data.manual[sub];
+          if (ansInSub === 10 || isManual) {
+            tDoneInModule++;
+          }
+        });
+
+        const topicPct = Math.round((tDoneInModule / m.subCount) * 100);
+        const questPct = Math.round((qDoneInModule / m.total) * 100);
+        const modPct = Math.max(topicPct, questPct);
+
+        // Progress cards no Dashboard
         const tEl = document.getElementById(`mod${m.id}-prog-text`);
         const bEl = document.getElementById(`mod${m.id}-prog-bar`);
-        if (tEl) tEl.textContent = `${done}/${m.total} (${pct}%)`;
-        if (bEl) bEl.style.width = pct + '%';
+        if (tEl) tEl.textContent = `${qDoneInModule}/${m.total} (${modPct}%)`;
+        if (bEl) bEl.style.width = modPct + '%';
 
-        // Checklist module boxes
+        // Headers dos módulos no Checklist
         const chkStat = document.getElementById(`chk-mod-${m.id}-stat`);
         const chkPct = document.getElementById(`chk-mod-${m.id}-pct`);
-        if (chkStat) chkStat.textContent = `${done}/${m.total}`;
-        if (chkPct) chkPct.textContent = `${pct}%`;
+        if (chkStat) chkStat.textContent = `${tDoneInModule}/${m.subCount} tópicos • ${qDoneInModule}/${m.total} Q`;
+        if (chkPct) chkPct.textContent = `${modPct}%`;
       });
     }
 
@@ -22968,8 +22893,10 @@ tr:hover td { background-color: var(--slate-50); }
       const scoreDisplay = quizBox.querySelector('.score-display') || document.getElementById(`score-${subId}`);
       if (scoreDisplay) {
         if (answeredCount > 0) {
+          const acc = Math.round((correctCount / answeredCount) * 100);
+          const forceSub = Math.round(((answeredCount / cards.length) * (acc / 100)) * 100);
           scoreDisplay.style.display = 'block';
-          scoreDisplay.innerHTML = `Desempenho no Subtópico: <strong>${correctCount} de ${answeredCount}</strong> respondidas (${cards.length} no total) • Aproveitamento: <strong>${Math.round((correctCount / answeredCount) * 100)}%</strong>`;
+          scoreDisplay.innerHTML = `Desempenho no Subtópico: <strong>${correctCount} de ${answeredCount}</strong> respondidas (${cards.length} no total) • Aproveitamento: <strong>${acc}%</strong> • Força do Subtópico: <strong>${forceSub}%</strong>`;
         } else {
           scoreDisplay.style.display = 'none';
         }
@@ -23015,7 +22942,7 @@ tr:hover td { background-color: var(--slate-50); }
         }
       });
 
-      // Remove from localStorage
+      // Remove do localStorage
       removeSubtopicFromStorage(subId);
 
       const scoreDisplay = quizBox.querySelector('.score-display') || document.getElementById(`score-${subId}`);
@@ -23024,8 +22951,9 @@ tr:hover td { background-color: var(--slate-50); }
       const resetBtn = quizBox.querySelector('.btn-secondary') || document.getElementById(`btn-reset-${subId}`);
       if (resetBtn) resetBtn.style.display = 'none';
 
-      updateGlobalUI();
       updateChecklistItem(subId);
+      updateChecklistCounters();
+      updateGlobalUI();
     }
 
     // --- CHECKLIST INTERATIVO DE SUBTÓPICOS ---
@@ -23048,8 +22976,8 @@ tr:hover td { background-color: var(--slate-50); }
       });
 
       const total = cards.length || 10;
-      const pct = Math.round((answered / total) * 100);
-      const acc = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+      const data = getStoredData();
+      const isManual = data.manual && data.manual[subId];
 
       const bar = document.getElementById(`chk-bar-${subId}`);
       const txt = document.getElementById(`chk-txt-${subId}`);
@@ -23057,53 +22985,65 @@ tr:hover td { background-color: var(--slate-50); }
       const badge = document.getElementById(`chk-badge-${subId}`);
       const chkInput = document.getElementById(`chk-check-${subId}`);
 
-      if (bar) bar.style.width = pct + '%';
-      if (txt) txt.textContent = `${answered}/${total} Q`;
-
-      if (accSpan) {
-        if (answered > 0) {
-          accSpan.style.display = 'inline';
-          accSpan.textContent = `• ${correct} acertos (${acc}%)`;
-        } else {
-          accSpan.style.display = 'none';
-        }
-      }
-
-      // Check manual state
-      const data = getStoredData();
-      const isManual = data.manual && data.manual[subId];
-
       if (answered === total || isManual) {
         row.dataset.status = "done";
         row.classList.add('is-done');
+        if (bar) bar.style.width = '100%';
+        if (txt) txt.textContent = isManual && answered === 0 ? 'Lido & Estudado ✔' : `${answered}/${total} Q`;
         if (badge) {
           badge.className = 'chk-status-badge done';
           badge.textContent = 'Concluído ✔';
         }
         if (chkInput) chkInput.checked = true;
+
+        if (accSpan) {
+          if (answered > 0) {
+            const acc = Math.round((correct / answered) * 100);
+            accSpan.style.display = 'inline';
+            accSpan.textContent = `• ${correct} acertos (${acc}%)`;
+          } else {
+            accSpan.style.display = 'inline';
+            accSpan.textContent = `• 100% lido`;
+          }
+        }
       } else if (answered > 0) {
         row.dataset.status = "progress";
         row.classList.remove('is-done');
+        const pct = Math.round((answered / total) * 100);
+        const acc = Math.round((correct / answered) * 100);
+
+        if (bar) bar.style.width = pct + '%';
+        if (txt) txt.textContent = `${answered}/${total} Q`;
         if (badge) {
           badge.className = 'chk-status-badge progress';
           badge.textContent = `Em Andamento (${answered}/${total})`;
         }
         if (chkInput) chkInput.checked = false;
+
+        if (accSpan) {
+          accSpan.style.display = 'inline';
+          accSpan.textContent = `• ${correct} acertos (${acc}%)`;
+        }
       } else {
         row.dataset.status = "pending";
         row.classList.remove('is-done');
+        if (bar) bar.style.width = '0%';
+        if (txt) txt.textContent = `0/${total} Q`;
         if (badge) {
           badge.className = 'chk-status-badge pending';
           badge.textContent = 'Pendente';
         }
         if (chkInput) chkInput.checked = false;
+        if (accSpan) accSpan.style.display = 'none';
       }
     }
 
+    // Ação acionada quando o estudante marca/desmarca o checkbox no checklist
     function toggleManualSubtopicCheck(subId, isChecked) {
       saveManualCheckToStorage(subId, isChecked);
       updateChecklistItem(subId);
       updateChecklistCounters();
+      updateGlobalUI(); // <--- ATUALIZA INSTANTANEAMENTE FORÇA, FALTA E PROGRESSO!
     }
 
     function toggleChkModule(elem) {
@@ -23154,28 +23094,31 @@ tr:hover td { background-color: var(--slate-50); }
     // --- RESTAURAÇÃO DE RESPOSTAS DO LOCALSTORAGE ---
     function restoreSavedState() {
       const data = getStoredData();
-      if (!data.answers) return;
 
-      const answeredCards = Object.keys(data.answers);
-      if (answeredCards.length === 0) return;
+      // Restaurar respostas salvas
+      if (data.answers) {
+        const answeredCards = Object.keys(data.answers);
+        answeredCards.forEach(cardId => {
+          const qCard = document.getElementById(cardId);
+          if (qCard) {
+            const item = data.answers[cardId];
+            handleCardSelection(qCard, item.opt, item.sub, false);
+          }
+        });
+      }
 
-      answeredCards.forEach(cardId => {
-        const qCard = document.getElementById(cardId);
-        if (qCard) {
-          const item = data.answers[cardId];
-          handleCardSelection(qCard, item.opt, item.sub, false);
-        }
-      });
-
-      // Restore all checklist items
+      // Restaurar estado de todos os 55 itens do checklist
       for (const subId in subtopicTitles) {
         const cleanSub = subId.replace('sec-', '');
         updateChecklistItem(cleanSub);
       }
+
+      updateChecklistCounters();
+      updateGlobalUI();
     }
 
     function downloadHTML() {
-      const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      const htmlContent = '<!DOCTYPE html>' + String.fromCharCode(10) + document.documentElement.outerHTML;
       const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -23186,25 +23129,15 @@ tr:hover td { background-color: var(--slate-50); }
       URL.revokeObjectURL(a.href);
     }
 
-    // Initialize system
+    // Inicialização do sistema
     document.addEventListener('DOMContentLoaded', () => {
       restoreSavedState();
-      updateGlobalUI();
-      for (const subId in subtopicTitles) {
-        const cleanSub = subId.replace('sec-', '');
-        updateChecklistItem(cleanSub);
-      }
     });
 
-    // Fallback immediate call if DOM already loaded
+    // Chamada imediata como contingência caso o DOM já esteja carregado
     setTimeout(() => {
       restoreSavedState();
-      updateGlobalUI();
-      for (const subId in subtopicTitles) {
-        const cleanSub = subId.replace('sec-', '');
-        updateChecklistItem(cleanSub);
-      }
-    }, 200);
+    }, 150);
 
   </script>
 
